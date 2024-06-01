@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '~@fortawesome/fontawesome-free/css/all.css';
+
+
+th,td{
+    @apply p-4;
+}
+
+th{
+    @apply text-gray-300
+}
+
+td{
+    @apply text-gray-500
+}
+
+.container{
+    width: 100vw !important;
+}
+
+.btn-nav:hover{
+    @apply bg-gray-300 text-blue-500
+}
+
+.btn-nav{
+    @apply px-2
+}
+
+.col{
+    @apply flex flex-col gap-2 w-full 
+}
+
+label{
+    @apply text-gray-100
+}
+
+form input{
+    @apply px-4 py-2 text-gray-700 bg-gray-200 rounded-md border border-gray-300
+}
+
+.error{
+    @apply text-red-500
+}
+
+*{
+    @apply box-border m-0 p-0
+}
+
+.hfull{
+    height: calc(100% - 75px);
+}

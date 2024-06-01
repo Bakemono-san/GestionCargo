@@ -1,0 +1,119 @@
+[
+    {
+        "id": 935,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Royaume-Uni",
+        "to": "Irlande",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 605965,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [
+            {
+                "id": 256,
+                "name": "dezhj",
+                "weight": 324,
+                "client": {
+                    "name": "dhf",
+                    "surname": "furjz",
+                    "phone": "755643",
+                    "address": "jkfz"
+                },
+                "receiver": {
+                    "name": "hfah",
+                    "surname": "hjf",
+                    "phone": "432",
+                    "address": "bfzj"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 0
+            }
+        ],
+        "globalState": "closed",
+        "status": "loading",
+        "full": false
+    },
+    {
+        "id": 737,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Error fetching location name",
+        "to": "Error fetching location name",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 4466412,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "open",
+        "status": "loading",
+        "full": false
+    },
+    {
+        "id": 685,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Error fetching location name",
+        "to": "England",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 5038,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "closed",
+        "status": "loading",
+        "full": false
+    },
+    {
+        "id": 471,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Error fetching location name",
+        "to": "Error fetching location name",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 4749,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "open",
+        "status": "loading",
+        "full": false
+    },
+    {
+        "id": 943,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Error fetching location name",
+        "to": "Error fetching location name",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 4749,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "open",
+        "status": "loading",
+        "full": false
+    },
+    {
+        "id": 955,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Error fetching location name",
+        "to": "Error fetching location name",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 4749,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "open",
+        "status": "loading",
+        "full": false
+    }
+]
