@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
+    "axios": "^1.7.2",
+    "emailjs-com": "^3.2.0",
     "typescript": "^5.4.5"
   },
   "type": "module",

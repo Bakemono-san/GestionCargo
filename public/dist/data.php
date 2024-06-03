@@ -18,7 +18,7 @@ function writeJSON($filename, $data)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = json_decode(file_get_contents('php://input'), true);
 
-   
+
     $cargos = $action;
 
     writeJSON('./datas/cargos.json', $cargos);
@@ -38,3 +38,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($data);
     exit;
 }
+
+?>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="output.css">
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Document</title>
 </head>
 
@@ -51,7 +52,7 @@
                 </button>
             </div>
         </header>
-        <main class="hfull flex relative">
+        <main class="hfull flex relative" id="Cargos">
             <div class="p-4 border-r max-w-64 flex-1 flex flex-col justify-between relative">
                 <nav class="flex flex-col gap-4 text-gray-500">
                     <h3>Principal</h3>
@@ -62,7 +63,7 @@
                         <p>Cargos</p>
                     </button>
                     <button class="text-left py-1 flex items-center gap-4  btn-nav"><i class="fa-solid fa-box"></i>
-                        <p>Products</p>
+                        <a href="./recuperation.php">Products</a>
                     </button>
                 </nav>
                 <button class="h-12 bg-white border-t w-full flex items-center justify-between">
@@ -129,510 +130,6 @@
                     </div>
                 </div>
                 <div class="grid xl:grid-cols-4 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-5 overflow-scroll gap-4" id="cardContainer">
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2" >
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
-                    <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div>
                 </div>
                 <div class="h-12 bg-white border-t absolute bottom-0 w-full">
 
@@ -707,10 +204,10 @@
                         <h3>Detail Cargo</h3>
                     </div>
                     <div class="border-b flex-1 flex justify-between" id="cargoDetails">
-                        
+
                     </div>
                     <div class="h-14 px-4 flex justify-end items-center text-white">
-                        <div class="col" >
+                        <div class="col">
                             <div id="upgrade" class="text-center bg-green-400 max-w-fit p-2 rounded-lg cursor-pointer">
                                 Start
                             </div>
@@ -760,8 +257,9 @@
                 }
             </script>
             <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
 
-            <div class="h-full w-2 bg-gray-300  flex items-center justify-center absolute -right-0 transition-all duration-700" id="sliderAddProduct">
+            <div class="h-full w-2 bg-slate-800  flex items-center justify-center absolute -right-0 transition-all duration-700" id="sliderAddProduct">
                 <button class="py-12 px-1 bg-gray-300 rounded flex items-center justify-center text-white absolute -left-3" id="btnSliderAddProduct">
                     <i class="fa-solid fa-angles-left"></i>
                 </button>
@@ -783,10 +281,10 @@
                                         <div class="flex flex-col gap-2">
                                             <input type="text" name="clientPhone" id="clientPhone" placeholder="Phone number" />
                                             <div class="flex gap-4">
-                                                <input type="text" class="w-1/2" name="clientName" placeholder="First name" />
-                                                <input type="text" class="w-1/2" name="clientLastName" placeholder="Last name" />
+                                                <input type="text" class="w-1/2" name="clientName" id="clientName" placeholder="First name" />
+                                                <input type="text" class="w-1/2" name="clientLastName" id="clientLastName" placeholder="Last name" />
                                             </div>
-                                            <input type="text" name="clientAddress" placeholder="Address" />
+                                            <input type="text" name="clientAddress" id="clientAddress" placeholder="Address" />
                                         </div>
                                     </form>
 
@@ -797,10 +295,10 @@
                                         <div class="flex flex-col gap-2">
                                             <input type="text" name="receiverPhone" id="phone" placeholder="Phone number" />
                                             <div class="flex gap-4">
-                                                <input type="text" class="w-1/2" name="receiverName" placeholder="First name" />
-                                                <input type="text" class="w-1/2" name="receiverLastName" placeholder="Last name" />
+                                                <input type="text" class="w-1/2" name="receiverName" id="receiverName" placeholder="First name" />
+                                                <input type="text" class="w-1/2" name="receiverLastName" id="receiverLastName" placeholder="Last name" />
                                             </div>
-                                            <input type="text" name="receiverAddress" placeholder="Address" />
+                                            <input type="text" name="receiverAddress" id="receiverAddress" placeholder="Address" />
                                         </div>
                                     </form>
                                     <div class="flex justify-center w-full left-0 absolute bottom-4 hover:text-teal-400 text-white">
@@ -809,7 +307,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="bg-slate-800 text-white px-8 py-20 w-1/3 col gap-4 rounded-tr rounded-br">
+                                <div class="bg-slate-900 text-white px-8 py-20 w-1/3 col gap-4 rounded-tr rounded-br">
                                     <h1 class="bg-white p-2 text-center mb-4 text-black rounded font-semibold text-xl">
                                         Product form
                                     </h1>
@@ -819,11 +317,11 @@
                                             <input type="text" name="productName" placeholder="Product name" />
                                             <input type="number" name="weight" placeholder="Product weight" />
                                             <select name="productType" id="productType" class="p-3 bg-gray-600 rounded">
-                                                
+
                                             </select>
                                             <div class="col h-[43px]" id="extra"></div>
                                         </div>
-                                        
+
                                     </form>
                                 </div>
                             </div>
@@ -847,30 +345,7 @@
 </html>
 
 <!-- cardComponent -->
-<!-- <div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <input type="checkbox" name="" id="">
-                            </div>
-                            <div>
-                                <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p>
-                            </div>
-                        </div>
-                        <div>
-                            <img src="https://www.transcocargo.com.au/wp-content/uploads/2023/02/The-Future-of-Cargo-Transportation-and-Logistics-1.jpg" alt="">
-                        </div>
-                        <div class="flex justify-between">
-                            <p>cargo 1</p>
-                            <div>
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>Vegas</p>
-                            <p>-></p>
-                            <p>Senegal</p>
-                        </div>
-                    </div> -->
+<!--  -->
 
 <!-- BadgeComponent -->
 <!-- <p class="px-2 py-1 bg-green-500 text-white rounded text-center">Aerial</p> -->

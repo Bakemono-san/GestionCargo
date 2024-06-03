@@ -1,21 +1,13 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { Cargo, Product, User, ChemicalProduct, MaterialProduct, AerialCargo, MaritimeCargo, RoadCargo, FoodProduct, } from "./Cargos.js";
+emailjs.init("tEhx_KOTiWjrPT4gB");
 let data;
 let page = 0;
 let el = 5;
 let donnee;
-const getLocationName = (lat, lon) => __awaiter(void 0, void 0, void 0, function* () {
+const getLocationName = async (lat, lon) => {
     try {
-        const response = yield fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-        const data = yield response.json();
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const data = await response.json();
         if (data && data.display_name) {
             return data.address.country;
         }
@@ -27,7 +19,7 @@ const getLocationName = (lat, lon) => __awaiter(void 0, void 0, void 0, function
         console.error("Error fetching location name:", error);
         return "Error fetching location name";
     }
-});
+};
 let startPoint = null;
 let endPoint = null;
 let line = null;
@@ -39,7 +31,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 // Event listener for clicking on the map
-map.on("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
+map.on("click", async (e) => {
     if (!startPoint) {
         startPoint = e.latlng; // Set the start point
         L.marker(startPoint).addTo(map); // Add a marker for the start point
@@ -51,18 +43,18 @@ map.on("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
     }
     distance = Math.round(startPoint.distanceTo(endPoint));
     // Get the starting location name
-    startingLocation = yield getLocationName(startPoint.lat, startPoint.lng);
+    startingLocation = await getLocationName(startPoint.lat, startPoint.lng);
     let start = document.querySelector("#start");
     start.innerText = startingLocation;
     // Get the ending location name
-    endingLocation = yield getLocationName(endPoint.lat, endPoint.lng);
+    endingLocation = await getLocationName(endPoint.lat, endPoint.lng);
     let end = document.querySelector("#end");
     end.innerText = endingLocation;
     // Draw a line between the two points
     line = L.polyline([startPoint, endPoint], {
         color: "red",
     }).addTo(map);
-}));
+});
 let fullIndicator = document.getElementById("fullIndicator");
 let indicator = document.getElementById("indicator");
 fullIndicator.addEventListener("input", (e) => {
@@ -130,11 +122,12 @@ function toggleSlide(index) {
             addProductForm.classList.add("hidden");
         }
     });
-    let cargo = data["cargos"][index];
+    let cargo = data[index];
     let submitBtn = document.getElementById("addProduct");
     submitBtn.addEventListener("click", () => {
         let product = getProduct();
-        data["cargos"][index].addProduct(product);
+        data[index].addProduct(product);
+        sendEmail(product.ProductID);
         sendToJson();
     });
 }
@@ -144,7 +137,7 @@ function filter() {
     let filterStatus = document.getElementById("filterStatus");
     let filterStep = document.getElementById("filterStep");
     filterAll.addEventListener("keyup", (e) => {
-        donnee = data["cargos"].filter((cargo) => {
+        donnee = data.filter((cargo) => {
             return (cargo.typeOfCargo
                 .toLowerCase()
                 .includes(filterAll.value.toLowerCase().trim()) ||
@@ -169,7 +162,7 @@ function filter() {
         displayListCargos();
     });
     filterType.addEventListener("change", (e) => {
-        donnee = data["cargos"].filter((cargo) => {
+        donnee = data.filter((cargo) => {
             return cargo.typeOfCargo
                 .toLowerCase()
                 .includes(filterType.selectedOptions[0].value.toLowerCase());
@@ -178,7 +171,7 @@ function filter() {
         displayListCargos();
     });
     filterStatus.addEventListener("change", (e) => {
-        donnee = data["cargos"].filter((cargo) => {
+        donnee = data.filter((cargo) => {
             return cargo.cargoGlobalState
                 .toLowerCase()
                 .includes(filterStatus.selectedOptions[0].value.toLowerCase());
@@ -187,7 +180,7 @@ function filter() {
         displayListCargos();
     });
     filterStep.addEventListener("change", (e) => {
-        donnee = data["cargos"].filter((cargo) => {
+        donnee = data.filter((cargo) => {
             return cargo.cargoStatus
                 .toLowerCase()
                 .includes(filterStep.selectedOptions[0].value.toLowerCase());
@@ -202,7 +195,8 @@ function showDetailCargo(index) {
     upgrade.classList.remove("bg-gray-300");
     upgrade.classList.remove("cursor-not-allowed");
     upgrade.classList.remove("text-slate-800");
-    let cargo = data["cargos"][index];
+    let cargo = data[index];
+    console.log(cargo.totalPrice());
     if (cargo.cargoStatus == "loading") {
         upgrade.innerText = "start";
     }
@@ -216,9 +210,9 @@ function showDetailCargo(index) {
         upgrade.innerText = "losted";
     }
     let cargoDetails = document.getElementById("cargoDetails");
-    let productModel = data["cargos"][index].listOfProducts
-        .map((product) => {
-        return `<p class="px-2 py-1 bg-slate-500 text-white rounded text-center">${product.productName}</p>`;
+    let productModel = data[index].listOfProducts
+        .map((product, indexProduct) => {
+        return `<div class="flex"><p class="px-2 py-1 bg-slate-500 text-white rounded-l text-center">${product.productName}</p><p class="bg-red-600 text-white rounded-r px-2 py-1" data-indexProduct="${indexProduct}" data-indexCargo="${index}" id="delete">X</p></div>`;
     })
         .join("");
     let model = `<div class="flex-1 p-8 text-gray-100 flex flex-col justify-between">
@@ -230,7 +224,7 @@ function showDetailCargo(index) {
     <div class="flex justify-between">
     <div>
         <h1 class="text-xl">Max weight : </h1>
-        <p>${cargo.totalWeight} kg</p>
+        <p>${cargo.totalWeight}/${cargo.cargoMaxWeight} kg</p>
     </div>
     
     </div>
@@ -269,9 +263,16 @@ function showDetailCargo(index) {
             <p>${cargo.endingDate}</p>
         </div>
     </div>
+    <div class="flex justify-between">
+
     <div>
         <h1 class="text-xl">Distance : </h1>
         <p>${cargo.distance} km</p>
+    </div>
+    <div>
+        <h1 class="text-xl">Prix : </h1>
+        <p>${cargo.totalPrice()} fcfa</p>
+    </div>
     </div>
 
 </div>
@@ -288,8 +289,8 @@ function showDetailCargo(index) {
     // let setStatus = document.getElementById("setStatus") as HTMLElement;
     let setGlobalState = document.getElementById("setGlobalState");
     setGlobalState.addEventListener("click", () => {
-        let value = setGlobalState.innerText == "open" ? "closed" : "open";
         cargo.changeState();
+        let value = cargo.cargoGlobalState;
         displayListCargos();
         sendToJson();
         setGlobalState.innerText = value;
@@ -303,38 +304,52 @@ function showDetailCargo(index) {
         }
     });
     upgrade.addEventListener("click", () => {
-        let response = data["cargos"][index].upgradeStatus();
+        data[index].upgradeStatus();
+        setGlobalState.innerText = data[index].cargoGlobalState;
         sendToJson();
+        donnee = data.slice(page * el, page * el + el);
         displayListCargos();
         upgrade.innerText =
-            data["cargos"][index].cargoStatus == "loading" ? "start" : "deliver";
+            data[index].cargoStatus == "loading" ? "start" : "transporting";
         let setStatus = document.getElementById("setStatus");
-        setStatus.innerText = data["cargos"][index].cargoStatus;
+        setStatus.innerText = data[index].cargoStatus;
         let markLost = document.getElementById("markLost");
-        if (data["cargos"][index].cargoStatus == "transporting") {
+        if (data[index].cargoStatus == "transporting") {
             markLost.classList.remove("hidden");
             markLost.addEventListener("click", () => {
-                data["cargos"][index].markLost();
+                data[index].markLost();
                 upgrade.classList.remove("bg-green-400");
                 upgrade.classList.add("bg-gray-300");
                 upgrade.classList.add("cursor-not-allowed");
                 upgrade.classList.add("text-slate-800");
                 upgrade.innerText = " losted";
                 markLost.classList.add("hidden");
-                setStatus.innerText = data["cargos"][index].cargoStatus;
+                setStatus.innerText = data[index].cargoStatus;
                 sendToJson();
             });
         }
         else {
             markLost.classList.add("hidden");
         }
-        if (data["cargos"][index].cargoStatus == "delivered") {
+        if (data[index].cargoStatus == "delivered") {
             upgrade.classList.remove("bg-green-400");
             upgrade.classList.add("bg-gray-300");
             upgrade.classList.add("cursor-not-allowed");
             upgrade.classList.add("text-slate-800");
             upgrade.innerText = " delivered";
         }
+    });
+    let deletes = document.querySelectorAll("#delete");
+    deletes.forEach((deleteButton) => {
+        deleteButton.addEventListener("click", () => {
+            let indexProduct = deleteButton.getAttribute("data-indexProduct");
+            let indexCargo = deleteButton.getAttribute("data-indexCargo");
+            data[indexCargo].removeProduct(indexProduct);
+            deleteButton.parentElement.remove();
+            sendToJson();
+            donnee = data.slice(page * el, page * el + el);
+            displayListCargos();
+        });
     });
     document.querySelector("#DetailOverlay").classList.remove("hidden");
     document.querySelector("#DetailOverlay").classList.add("flex");
@@ -360,7 +375,7 @@ function getProduct() {
     let receiverUser = new User(receiverName, receiverLastName, receiverPhone, receiverAddress);
     let id = generateCargoID();
     let name = formData.get("productName");
-    let type = formData.get("ProductType");
+    let type = formData.get("productType");
     let weight = parseFloat(formData.get("weight"));
     let newProduct;
     if (type == "Material") {
@@ -409,7 +424,7 @@ function sendToJson() {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(data["cargos"]),
+        body: JSON.stringify(data),
     })
         .then((response) => {
         if (!response.ok) {
@@ -490,7 +505,7 @@ function displayCargosCard() {
     let cardContainer = document.getElementById("cardContainer");
     cardContainer.style.display = "grid";
     cardContainer.innerHTML = "";
-    let cards = data["cargos"]
+    let cards = data
         .map((element, index) => {
         return `<div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2" >
     <div class="flex justify-between items-center" >
@@ -527,8 +542,8 @@ function displayCargosCard() {
     cargos.forEach((element) => {
         element.addEventListener("click", () => {
             let idCargo = element.getAttribute("data-idCargo");
-            let index = data["cargos"].findIndex((element) => element.id == idCargo);
-            openAddProduct(index, data["cargos"][index].typeOfCargo);
+            let index = data.findIndex((element) => element.id == idCargo);
+            openAddProduct(index, data[index].typeOfCargo);
         });
     });
     let detailSlider = document.querySelectorAll("#detailSlider");
@@ -541,11 +556,13 @@ function displayCargosCard() {
     let showActions = document.querySelectorAll("#showAction");
     showActions.forEach((element) => {
         element.addEventListener("click", () => {
-            var _a;
             let index = parseInt(element.getAttribute("data-index"));
-            (_a = element.firstElementChild) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
+            showAction(element);
         });
     });
+}
+function showAction(element) {
+    element.firstElementChild?.classList.remove("hidden");
 }
 function openAddProduct(index, typeOfCargo) {
     toggleSlide(index);
@@ -567,6 +584,19 @@ function openAddProduct(index, typeOfCargo) {
         productType.innerHTML += `<option value="Food">Food</option><option value="Chemical">Chemical</option>
   <option value="Material">Material</option>`;
     }
+    let clientPhone = document.getElementById("clientPhone");
+    let client;
+    clientPhone.addEventListener("input", () => {
+        client = data[index].clientProduct(clientPhone.value);
+        let clientName = document.getElementById("clientName");
+        let clientLastName = document.getElementById("clientLastName");
+        let clientAddress = document.getElementById("clientAddress");
+        if (client.length > 0) {
+            clientName.value = client[0]["client"].name;
+            clientLastName.value = client[0]["client"].surname;
+            clientAddress.value = client[0]["client"].address;
+        }
+    });
     sliderAddProduct.classList.remove("w-2");
     sliderAddProduct.classList.add("w-1/2");
     addProductForm.classList.remove("hidden");
@@ -633,8 +663,8 @@ function displayListCargos() {
     cargos.forEach((element) => {
         element.addEventListener("click", () => {
             let idCargo = element.getAttribute("data-idCargo");
-            let index = data["cargos"].findIndex((element) => element.id == idCargo);
-            openAddProduct(index, data["cargos"][index].typeOfCargo);
+            let index = data.findIndex((element) => element.id == idCargo);
+            openAddProduct(index, data[index].typeOfCargo);
         });
     });
     let detailSlider = document.querySelectorAll("#detailSliderList");
@@ -651,10 +681,10 @@ function paginate(el) {
     let previous = document.querySelector("#previous");
     let pageInd = parseInt(document.querySelector("#page").getAttribute("data-page"));
     next.addEventListener("click", () => {
-        if (data.cargos.slice(pageInd * el, (pageInd + 1) * el + el).length > 0) {
+        if (data.slice(pageInd * el, (pageInd + 1) * el + el).length > 0) {
             pageInd = pageInd + 1;
             page = pageInd;
-            donnee = data.cargos.slice(page * el, page * el + el);
+            donnee = data.slice(page * el, page * el + el);
             displayListCargos();
         }
     });
@@ -662,51 +692,39 @@ function paginate(el) {
         if (pageInd > 0) {
             pageInd = pageInd - 1;
             page = pageInd;
-            donnee = data.cargos.slice(page * el, page * el + el);
+            donnee = data.slice(page * el, page * el + el);
             displayListCargos();
         }
     });
 }
-function fetchData() {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a;
-        try {
-            const response = yield fetch("./dist/data.php"); // Adjust the path if necessary
-            if (!response.ok) {
-                throw new Error("Network response was not ok " + response.statusText);
-            }
-            data = yield response.json();
-            data["cargos"].forEach((cargo, index) => {
-                let products = data["cargos"][index].products;
-                products = products.map((product) => {
-                    return transformToProduct(product);
-                });
-                data["cargos"][index] = transformToCargo(cargo);
-                data["cargos"][index].products = products;
+async function fetchData() {
+    try {
+        const response = await fetch("http://www.bakemono.sn:8001/newGpApp/public/dist/data.php");
+        if (!response.ok) {
+            throw new Error("Network response was not ok " + response.statusText);
+        }
+        const responseData = await response.json();
+        data = responseData.cargos; // Extracting the cargos array directly
+        data.forEach((cargo, index) => {
+            let products = cargo.products;
+            products = products.map((product) => {
+                return transformToProduct(product);
             });
-            donnee = data.cargos.slice(page * el, page * el + el);
-            if (((_a = document.getElementById("cardContainer")) === null || _a === void 0 ? void 0 : _a.style.display) == "flex") {
-                displayCargosCard();
-            }
-            else {
-                displayListCargos();
-            }
-            filter();
-            // const statsContainer = document.querySelector("#Stats") as HTMLElement;
-            // statsContainer.innerHTML = "";
-            // createStatCard({ name: "cargos", number: totalCargos });
-            // createStatCard({ name: "Maritime", number: maritimeCargo.length });
-            // createStatCard({ name: "Road", number: roadCargo.length });
-            // createStatCard({ name: "Aerial", number: aerialCargo.length });
-            // createStatCard({ name: "Products", number: totalProducts });
-            // createStatCard({ name: "Material", number: materialProducts.length });
-            // createStatCard({ name: "Chemical", number: chemicalProducts.length });
-            // createStatCard({ name: "Food", number: foodProduct.length });
+            data[index] = transformToCargo(cargo);
+            data[index].products = products;
+        });
+        donnee = data.slice(page * el, page * el + el);
+        if (document.getElementById("cardContainer")?.style.display == "flex") {
+            displayCargosCard();
         }
-        catch (error) {
-            console.error("Error fetching data:", error);
+        else {
+            displayListCargos();
         }
-    });
+        filter();
+    }
+    catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
 fetchData();
 function createProductFromForm() {
@@ -715,7 +733,7 @@ function createProductFromForm() {
     let receiver = new User("bakemono", "san", "785953562", "united kingdom");
     let id = generateCargoID();
     let name = ProductData.get("productName");
-    let type = ProductData.get("ProductType");
+    let type = ProductData.get("productType");
     let weight = parseFloat(ProductData.get("weight"));
     let newProduct;
     if (type == "Material") {
@@ -737,13 +755,22 @@ function createProductFromForm() {
 function transformToCargo(object) {
     const cargoType = object.cargoType;
     if (cargoType === "Aerial") {
-        return AerialCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        let cargo = AerialCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        cargo.status = object.status;
+        cargo.globalState = object.globalState;
+        return cargo;
     }
     else if (cargoType === "Maritime") {
-        return MaritimeCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        let cargo = MaritimeCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        cargo.status = object.status;
+        cargo.globalState = object.globalState;
+        return cargo;
     }
     else if (cargoType === "Road") {
-        return RoadCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        let cargo = RoadCargo.createCargo(object.id, object.maxWeight, object.fullIndicator, object.from, object.to, object.startingDate, object.endingDate, object.distance, object.duration, object.cargoType);
+        cargo.status = object.status;
+        cargo.globalState = object.globalState;
+        return cargo;
     }
 }
 function transformToProduct(object) {
@@ -757,46 +784,46 @@ function transformToProduct(object) {
         return MaterialProduct.createProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType, object.productSolidity);
     }
 }
-function createStatCard(stats) {
-    const statsContainer = document.querySelector("#Stats");
-    let model = `<div class="card w-72 h-20 bg-base-100 shadow-xl image-full shadow-black/50">
-      <figure><img src="./img/${stats.name}.png" class="w-full" alt="Shoes" /></figure>
-      <div class="card-body">
-        <h2 class="card-title text-blue-400">${stats.name}</h2>
-        <p class="text-2xl font-bold">${stats.number} element(s)</p>
-        <div class="card-actions justify-end">
-          <button class="btn btn-primary">Go to list</button>
-        </div>
-      </div>
-    </div>
-      `;
-    statsContainer.innerHTML += model;
-}
-function createProductCard(data) {
-    //     let model = `<div class="card w-72 h-20 bg-base-100 shadow-xl image-full shadow-black/50">
-    //     <figure><img src="./img/${data.productType}.png" class="w-full" alt="Shoes" /></figure>
-    //     <div class="card-body" data-id="${data.id}">
-    //       <h2 class="card-title text-blue-400 flex justify-between"><p>Product : ${data.name} </p></h2>
-    //       <p class="text-2xl font-bold">${data.productType} Product</p>
-    //       <div>weight: ${data.weight}</div>
-    //       <div class="card-actions justify-end">
-    //         <button class="btn btn-error">Delete</button>
-    //         <button class="btn btn-primary" id="addToCargo" data-id="${data.id}">add to Cargo</button>
-    //       </div>
-    //     </div>
-    //   </div>`;
-    //     listProduct.innerHTML += model;
-    //     addToCargo = document.querySelectorAll(
-    //       "#addToCargo"
-    //     ) as NodeListOf<HTMLElement>;
-    //     addToCargo.forEach((element) => {
-    //       element.addEventListener("click", (e) => {
-    //         let id = parseInt((e.target as HTMLElement).dataset.id!);
-    //         let product = getProduct(id);
-    //         openModalAjout(product);
-    //       });
-    //     });
-}
+// function createStatCard(stats: { name: string; number: number }): void {
+//   const statsContainer = document.querySelector("#Stats") as HTMLElement;
+//   let model = `<div class="card w-72 h-20 bg-base-100 shadow-xl image-full shadow-black/50">
+//       <figure><img src="./img/${stats.name}.png" class="w-full" alt="Shoes" /></figure>
+//       <div class="card-body">
+//         <h2 class="card-title text-blue-400">${stats.name}</h2>
+//         <p class="text-2xl font-bold">${stats.number} element(s)</p>
+//         <div class="card-actions justify-end">
+//           <button class="btn btn-primary">Go to list</button>
+//         </div>
+//       </div>
+//     </div>
+//       `;
+//   statsContainer.innerHTML += model;
+// }
+// function createProductCard(data: any) {
+//     let model = `<div class="card w-72 h-20 bg-base-100 shadow-xl image-full shadow-black/50">
+//     <figure><img src="./img/${data.productType}.png" class="w-full" alt="Shoes" /></figure>
+//     <div class="card-body" data-id="${data.id}">
+//       <h2 class="card-title text-blue-400 flex justify-between"><p>Product : ${data.name} </p></h2>
+//       <p class="text-2xl font-bold">${data.productType} Product</p>
+//       <div>weight: ${data.weight}</div>
+//       <div class="card-actions justify-end">
+//         <button class="btn btn-error">Delete</button>
+//         <button class="btn btn-primary" id="addToCargo" data-id="${data.id}">add to Cargo</button>
+//       </div>
+//     </div>
+//   </div>`;
+//     listProduct.innerHTML += model;
+//     addToCargo = document.querySelectorAll(
+//       "#addToCargo"
+//     ) as NodeListOf<HTMLElement>;
+//     addToCargo.forEach((element) => {
+//       element.addEventListener("click", (e) => {
+//         let id = parseInt((e.target as HTMLElement).dataset.id!);
+//         let product = getProduct(id);
+//         openModalAjout(product);
+//       });
+//     });
+// }
 let listView = document.getElementById("listView");
 let cardView = document.getElementById("cardView");
 listView.addEventListener("click", () => {
@@ -805,3 +832,25 @@ listView.addEventListener("click", () => {
 cardView.addEventListener("click", () => {
     displayCargosCard();
 });
+let findProduct = document.getElementById("findProduct");
+console.log("frhzk");
+findProduct.addEventListener("input", () => {
+    let product = data.filter((element) => {
+        element.searchProduct(findProduct.value);
+    });
+    console.log(product);
+});
+async function sendEmail(text) {
+    const templateParams = {
+        to_email: "ochatobake@gmail.com",
+        subject: "added product",
+        message: `product id : ${text}`,
+    };
+    try {
+        const response = await emailjs.send('service_ihqi8ze', 'template_j89td5b', templateParams);
+        console.log('Email sent successfully:', response.status, response.text);
+    }
+    catch (error) {
+        console.error('Error sending email:', error);
+    }
+}

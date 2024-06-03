@@ -12,51 +12,100 @@
         "cargoType": "Aerial",
         "products": [
             {
-                "id": 256,
-                "name": "dezhj",
-                "weight": 324,
+                "id": 836,
+                "name": "Yoshio Lambert",
+                "weight": 11,
                 "client": {
-                    "name": "dhf",
-                    "surname": "furjz",
-                    "phone": "755643",
-                    "address": "jkfz"
+                    "name": "Shad Beard",
+                    "surname": "Morales",
+                    "phone": "+1 (639) 217-2429",
+                    "address": "Esse qui nulla incid"
                 },
                 "receiver": {
-                    "name": "hfah",
-                    "surname": "hjf",
-                    "phone": "432",
-                    "address": "bfzj"
+                    "name": "Abel Rowland",
+                    "surname": "Keller",
+                    "phone": "+1 (124) 529-3609",
+                    "address": "Recusandae Inventor"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 0,
+                "autreFrais": 5000
+            }
+        ],
+        "globalState": "closed",
+        "status": "delivered",
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
+    },
+    {
+        "id": 737,
+        "maxWeight": 4554,
+        "fullIndicator": "weight",
+        "from": "Dakar",
+        "to": "Dakar",
+        "startingDate": "2024-05-30",
+        "endingDate": "2024-05-31",
+        "distance": 4466412,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [
+            {
+                "id": 84,
+                "name": "Courtney Wall",
+                "weight": 51,
+                "client": {
+                    "name": "Silas Glass",
+                    "surname": "Harding",
+                    "phone": "+1 (817) 759-9089",
+                    "address": "Deleniti autem ea su"
+                },
+                "receiver": {
+                    "name": "Shannon Martinez",
+                    "surname": "Craig",
+                    "phone": "+1 (357) 146-2082",
+                    "address": "Ipsam quos fuga Ull"
+                },
+                "productType": "Material",
+                "productStatus": "loading",
+                "price": 0,
+                "productSolidity": "cassable"
+            },
+            {
+                "id": 764,
+                "name": "Xena Taylor",
+                "weight": 37,
+                "client": {
+                    "name": "Leo Harrington",
+                    "surname": "Mayo",
+                    "phone": "+1 (881) 656-4866",
+                    "address": "Velit est laboris q"
+                },
+                "receiver": {
+                    "name": "Zia Stevenson",
+                    "surname": "Rollins",
+                    "phone": "+1 (542) 708-5741",
+                    "address": "Doloribus ipsum qui"
                 },
                 "productType": "Food",
                 "productStatus": "loading",
                 "price": 0
             }
         ],
-        "globalState": "closed",
-        "status": "loading",
-        "full": false
-    },
-    {
-        "id": 737,
-        "maxWeight": 4554,
-        "fullIndicator": "weight",
-        "from": "Error fetching location name",
-        "to": "Error fetching location name",
-        "startingDate": "2024-05-30",
-        "endingDate": "2024-05-31",
-        "distance": 4466412,
-        "duration": null,
-        "cargoType": "Aerial",
-        "products": [],
         "globalState": "open",
         "status": "loading",
-        "full": false
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
     },
     {
         "id": 685,
         "maxWeight": 4554,
         "fullIndicator": "weight",
-        "from": "Error fetching location name",
+        "from": "Dakar",
         "to": "England",
         "startingDate": "2024-05-30",
         "endingDate": "2024-05-31",
@@ -64,32 +113,60 @@
         "duration": null,
         "cargoType": "Aerial",
         "products": [],
-        "globalState": "closed",
+        "globalState": "open",
         "status": "loading",
-        "full": false
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
     },
     {
         "id": 471,
         "maxWeight": 4554,
         "fullIndicator": "weight",
-        "from": "Error fetching location name",
-        "to": "Error fetching location name",
+        "from": "Dakar",
+        "to": "Dakar",
         "startingDate": "2024-05-30",
         "endingDate": "2024-05-31",
         "distance": 4749,
         "duration": null,
         "cargoType": "Aerial",
-        "products": [],
+        "products": [
+            {
+                "id": 997,
+                "name": "Rylee Parsons",
+                "weight": 85,
+                "client": {
+                    "name": "Bethany Rutledge",
+                    "surname": "Berg",
+                    "phone": "+1 (582) 397-4694",
+                    "address": "Ea sit sint debitis"
+                },
+                "receiver": {
+                    "name": "Kiona Pate",
+                    "surname": "Bass",
+                    "phone": "+1 (486) 312-7969",
+                    "address": "Labore suscipit do d"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 0,
+                "autreFrais": 5000
+            }
+        ],
         "globalState": "open",
         "status": "loading",
-        "full": false
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
     },
     {
         "id": 943,
         "maxWeight": 4554,
         "fullIndicator": "weight",
-        "from": "Error fetching location name",
-        "to": "Error fetching location name",
+        "from": "Dakar",
+        "to": "Dakar",
         "startingDate": "2024-05-30",
         "endingDate": "2024-05-31",
         "distance": 4749,
@@ -98,14 +175,17 @@
         "products": [],
         "globalState": "open",
         "status": "loading",
-        "full": false
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
     },
     {
         "id": 955,
         "maxWeight": 4554,
         "fullIndicator": "weight",
-        "from": "Error fetching location name",
-        "to": "Error fetching location name",
+        "from": "Dakar",
+        "to": "Dakar",
         "startingDate": "2024-05-30",
         "endingDate": "2024-05-31",
         "distance": 4749,
@@ -114,6 +194,9 @@
         "products": [],
         "globalState": "open",
         "status": "loading",
-        "full": false
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
     }
 ]
