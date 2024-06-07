@@ -51,3 +51,7 @@ form input{
 .hfull{
     height: calc(100% - 75px);
 }
+
+form input:focus-visible{
+    @apply outline-none
+}

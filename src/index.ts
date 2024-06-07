@@ -13,6 +13,7 @@ import {
   MaritimeCargo,
   RoadCargo,
   FoodProduct,
+  sendMessage,
 } from "./Cargos.js";
 emailjs.init("tEhx_KOTiWjrPT4gB");
 
@@ -20,6 +21,7 @@ let data: any;
 let page = 0;
 let el = 5;
 let donnee: Cargo[];
+let cardData;
 
 const getLocationName = async (lat: number, lon: number): Promise<string> => {
   try {
@@ -80,17 +82,64 @@ map.on("click", async (e: L.LeafletMouseEvent) => {
   }).addTo(map);
 });
 
-let fullIndicator = document.getElementById(
-  "fullIndicator"
-) as HTMLSelectElement;
-let indicator = document.getElementById("indicator") as HTMLElement;
-fullIndicator.addEventListener("input", (e) => {
-  if (fullIndicator.selectedOptions[0].value == "weight") {
-    indicator.innerText = "Max weight in kg:";
-  } else {
-    indicator.innerText = "Number of product";
-  }
+let createCargo = document.getElementById("createCargo") as HTMLElement;
+
+createCargo.addEventListener("click", () => {
+  show();
+  let hidebtn = document.getElementById("hide") as HTMLElement;
+  hidebtn.addEventListener("click", () => {
+    hide();
+  });
 });
+
+function show() {
+  document.querySelector(".overlay")!.classList.remove("hidden");
+  document.querySelector(".overlay")!.classList.add("flex");
+  document.querySelector(".card")!.classList.add("right-2");
+  document.querySelector(".card")!.classList.remove("-right-full");
+  let fullIndicator = document.getElementById(
+    "fullIndicator"
+  ) as HTMLSelectElement;
+  let indicator = document.getElementById("indicator") as HTMLElement;
+  fullIndicator.addEventListener("input", (e) => {
+    if (fullIndicator.selectedOptions[0].value == "weight") {
+      indicator.innerText = "Max weight in kg:";
+    } else {
+      indicator.innerText = "Number of product";
+    }
+  });
+
+  let addCargo = document.getElementById("addCargo") as HTMLElement;
+  addCargo.addEventListener("click", () => {
+    createCargoFromForm();
+    document.querySelector(".overlay")!.classList.remove("flex");
+    document.querySelector(".overlay")!.classList.add("hidden");
+    document.querySelector(".card")!.classList.remove("right-2");
+    document.querySelector(".card")!.classList.add("-right-full");
+    validateCargo();
+  });
+}
+
+function hide() {
+  document.querySelector(".overlay")!.classList.remove("flex");
+  document.querySelector(".overlay")!.classList.add("hidden");
+  document.querySelector(".card")!.classList.remove("right-2");
+  document.querySelector(".card")!.classList.add("-right-full");
+}
+
+function showDetail() {
+  document.querySelector("#DetailOverlay")!.classList.remove("hidden");
+  document.querySelector("#DetailOverlay")!.classList.add("flex");
+  document.querySelector("#DetailCargo")!.classList.add("right-2");
+  document.querySelector("#DetailCargo")!.classList.remove("-right-full");
+}
+
+function hideDetail() {
+  document.querySelector("#DetailOverlay")!.classList.remove("flex");
+  document.querySelector("#DetailOverlay")!.classList.add("hidden");
+  document.querySelector("#DetailCargo")!.classList.remove("right-2");
+  document.querySelector("#DetailCargo")!.classList.add("-right-full");
+}
 
 function validateCargo() {
   let start = document.querySelector("#start") as HTMLElement;
@@ -114,16 +163,6 @@ function validateCargo() {
 function generateCargoID(): number {
   return Math.floor(Math.random() * 1000) + 1; // Just a simple random number generator for demonstration
 }
-
-let addCargo = document.getElementById("addCargo") as HTMLElement;
-addCargo.addEventListener("click", () => {
-  createCargoFromForm();
-  document.querySelector(".overlay")!.classList.remove("flex");
-  document.querySelector(".overlay")!.classList.add("hidden");
-  document.querySelector(".card")!.classList.remove("right-2");
-  document.querySelector(".card")!.classList.add("-right-full");
-  validateCargo();
-});
 
 function toggleSlide(index: number) {
   getProductType();
@@ -159,13 +198,32 @@ function toggleSlide(index: number) {
     }
   });
 
-  let cargo = data![index];
   let submitBtn = document.getElementById("addProduct") as HTMLElement;
-  submitBtn.addEventListener("click", () => {
-    let product = getProduct();
-    data![index].addProduct(product);
-    sendEmail(product.ProductID)
-    sendToJson();
+  submitBtn.addEventListener("click", async () => {
+    if (
+      validate("#sender") == false &&
+      validate("#receiver") == false &&
+      validate("#productForm") == false
+    ) {
+      let product = getProduct();
+      let res = data![index].addProduct(product);
+      document.getElementById("messageBody")!.innerText = res;
+      document.getElementById("message")!.classList.add("right-2");
+      document.getElementById("message")!.classList.add("top-2");
+      setTimeout(() => {
+        document.getElementById("message")!.classList.remove("right-2");
+        document.getElementById("message")!.classList.remove("top-2");
+      }, 2000);
+
+      let message = {
+        sendMessage: "sendMessage",
+        id: product.ProductID,
+        clientInfo: [product.receiverNumber],
+      };
+      const pdfFile = await generateRecipePDF(product);
+      // sendEmail(product.ProductID, pdfFile);
+      // sendToJson();
+    }
   });
 }
 
@@ -203,7 +261,11 @@ function filter() {
     });
     donnee = donnee.slice(page * el, page * el + el);
 
-    displayListCargos();
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
   });
 
   filterType.addEventListener("change", (e: any) => {
@@ -214,7 +276,11 @@ function filter() {
     });
     donnee = donnee.slice(page * el, page * el + el);
 
-    displayListCargos();
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
   });
 
   filterStatus.addEventListener("change", (e: any) => {
@@ -224,7 +290,11 @@ function filter() {
         .includes(filterStatus.selectedOptions[0].value.toLowerCase());
     });
     donnee = donnee.slice(page * el, page * el + el);
-    displayListCargos();
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
   });
 
   filterStep.addEventListener("change", (e: any) => {
@@ -234,33 +304,33 @@ function filter() {
         .includes(filterStep.selectedOptions[0].value.toLowerCase());
     });
     donnee = donnee.slice(page * el, page * el + el);
-    displayListCargos();
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
   });
 }
 
 function showDetailCargo(index: number) {
+  fetchData();
   let upgrade = document.getElementById("upgrade") as HTMLElement;
   upgrade.classList.add("bg-green-400");
   upgrade.classList.remove("bg-gray-300");
   upgrade.classList.remove("cursor-not-allowed");
   upgrade.classList.remove("text-slate-800");
 
-  let cargo = data![index];
-  console.log(cargo.totalPrice());
+  let DetailOverlay = document.getElementById("DetailOverlay") as HTMLElement;
+  DetailOverlay.addEventListener("click", (e: any) => {
+    hideDetail();
+  });
 
-  if (cargo.cargoStatus == "loading") {
-    upgrade.innerText = "start";
-  } else if (cargo.cargoStatus == "transporting") {
-    upgrade.innerText = "deliver";
-  } else if (cargo.cargoStatus == "delivered") {
-    upgrade.innerText = "delivered";
-  } else {
-    upgrade.innerText = "losted";
-  }
+  let cargo = data![index];
+
   let cargoDetails = document.getElementById("cargoDetails") as HTMLElement;
   let productModel = data![index].listOfProducts
     .map((product: Product, indexProduct: number) => {
-      return `<div class="flex"><p class="px-2 py-1 bg-slate-500 text-white rounded-l text-center">${product.productName}</p><p class="bg-red-600 text-white rounded-r px-2 py-1" data-indexProduct="${indexProduct}" data-indexCargo="${index}" id="delete">X</p></div>`;
+      return `<div class="flex cursor-pointer"><p id="showProduct" data-index="${indexProduct}" class="px-2 py-1 bg-slate-500 text-white rounded-l text-center">${product.productName}</p><p class="bg-red-600 text-white rounded-r px-2 py-1" data-indexProduct="${indexProduct}" data-indexCargo="${index}" id="delete">X</p></div>`;
     })
     .join("");
   let model = `<div class="flex-1 p-8 text-gray-100 flex flex-col justify-between">
@@ -344,13 +414,134 @@ function showDetailCargo(index: number) {
 
   cargoDetails.innerHTML = model;
 
+  if (cargo.cargoStatus == "loading") {
+    upgrade.innerText = "start";
+  } else if (cargo.cargoStatus == "transporting") {
+    upgrade.innerText = "deliver";
+    let globalState = document.getElementById("setGlobalState") as HTMLElement;
+    globalState.style.cursor = "not-allowed";
+  } else if (cargo.cargoStatus == "delivered") {
+    upgrade.innerText = "archiver";
+  } else if (cargo.cargoStatus == "archived") {
+    upgrade.innerText = "archived";
+  } else {
+    upgrade.innerText = "lost";
+  }
+
+  let showProducts = document.querySelectorAll(
+    "#showProduct"
+  ) as NodeListOf<HTMLElement>;
+
+  showProducts.forEach((showProduct) => {
+    showProduct.addEventListener("click", () => {
+      let indexproduct = showProduct.getAttribute("data-index");
+      let product = cargo.getProduct(indexproduct);
+      console.log(product, "produit --||");
+      hideDetail();
+      let detailProduct = document.getElementById("detailProduct") as HTMLElement;
+      detailProduct.style.display = "flex";
+      detailProduct.innerHTML = `<div class="mx-auto w-full max-w-4xl p-8 bg-white rounded-lg shadow-2xl text-gray-800 space-y-8">
+      <!-- Top Details Section -->
+      <div class="flex flex-col items-center text-center p-6 border-b border-gray-200">
+        <h1 class="text-3xl font-semibold mb-4">Product ID: ${product.ProductID}</h1>
+        <p class="text-2xl font-medium mb-2">Name: ${product.productName}</p>
+        <div class="flex space-x-8 justify-center gap-8">
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Weight:</h2>
+            <p class="mt-1">${product.ProductWeight} kg</p>
+          </div>
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Status:</h2>
+            <p class="mt-1 px-2 py-1 bg-yellow-500 text-white rounded" id="productStatus">${product.ProductStatus}</p>
+          </div>
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Price:</h2>
+            <p class="mt-1">${product.productPrice} FCFA</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Bottom Section: Client and Receiver Info -->
+      <div class="flex space-x-6">
+        <!-- Client Section -->
+        <div class="w-1/2 p-6 bg-gray-50 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold mb-4 text-gray-700 border-b border-gray-300 pb-2">Client</h2>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Name:</h3>
+            <p class="mt-1 px-4 py-2 bg-gray-200 text-gray-900 rounded">${product.productClient.name}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Phone:</h3>
+            <p class="mt-1">${product.productClient.phone}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Address:</h3>
+            <p class="mt-1">${product.productClient.address}</p>
+          </div>
+        </div>
+    
+        <!-- Receiver Section -->
+        <div class="w-1/2 p-6 bg-gray-50 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold flex items-center gap-4 mb-4 text-gray-700 border-b border-gray-300 pb-2">Receiver</h2>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Name:</h3>
+            <p class="mt-1 px-4 py-2 bg-green-200 text-gray-900 rounded">${product.productReceiver.name}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Phone:</h3>
+            <p class="mt-1">${product.productReceiver.phone}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Address:</h3>
+            <p class="mt-1">${product.productReceiver.address}</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Recuperer Button -->
+      <div class="flex justify-between pt-4">
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300" id="lostProduct">
+          mark lost
+        </button>
+        <button class="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300" id="closeProduct">
+          close
+        </button>
+      </div>
+    </div>`;
+
+    let closeProduct = document.getElementById("closeProduct") as HTMLElement;
+    closeProduct.addEventListener("click", () => {
+      detailProduct.style.display = "none";
+    })
+
+    let lostProduct = document.getElementById("lostProduct") as HTMLElement;
+    lostProduct.addEventListener("click", () => {
+      
+      let message: string = data![index].markProductLost(indexproduct)
+      document.getElementById("messageBody")!.innerText = message;
+      document.getElementById('productStatus')!.innerText = data![index!].getProduct(indexproduct).ProductStatus;
+      document.getElementById("message")!.classList.add("right-2");
+      document.getElementById("message")!.classList.add("top-2");
+      setTimeout(() => {
+        document.getElementById("message")!.classList.remove("right-2");
+        document.getElementById("message")!.classList.remove("top-2");
+      }, 2000);
+    })
+    });
+    
+  });
+
   // let setStatus = document.getElementById("setStatus") as HTMLElement;
   let setGlobalState = document.getElementById("setGlobalState") as HTMLElement;
 
   setGlobalState.addEventListener("click", () => {
     cargo.changeState();
     let value: State = cargo.cargoGlobalState;
-    displayListCargos();
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
     sendToJson();
     setGlobalState.innerText = value;
     if (value == "closed") {
@@ -363,13 +554,43 @@ function showDetailCargo(index: number) {
   });
 
   upgrade.addEventListener("click", () => {
-    data![index].upgradeStatus();
+    let message: string = data![index].upgradeStatus();
+    document.getElementById("messageBody")!.innerText = message;
+    document.getElementById("message")!.classList.add("right-2");
+    document.getElementById("message")!.classList.add("top-2");
+    setTimeout(() => {
+      document.getElementById("message")!.classList.remove("right-2");
+      document.getElementById("message")!.classList.remove("top-2");
+    }, 2000);
+    if (message.includes("start")) {
+      document.getElementById("messageBody")!.classList.add("bg-green-500");
+    } else if (message.includes("sending")) {
+      document.getElementById("messageBody")!.classList.add("bg-yellow-500");
+    }
+
     setGlobalState.innerText = data![index].cargoGlobalState;
     sendToJson();
     donnee = data!.slice(page * el, page * el + el);
-    displayListCargos();
-    upgrade.innerText =
-      data![index].cargoStatus == "loading" ? "start" : "transporting";
+    if (document.getElementById("cardContainer")?.style.display == "flex") {
+      displayListCargos();
+    } else {
+      displayCargosCard();
+    }
+    if (cargo.cargoStatus == "loading") {
+      upgrade.innerText = "start";
+    } else if (cargo.cargoStatus == "transporting") {
+      upgrade.innerText = "deliver";
+      let globalState = document.getElementById(
+        "setGlobalState"
+      ) as HTMLElement;
+      globalState.style.cursor = "not-allowed";
+    } else if (cargo.cargoStatus == "delivered") {
+      upgrade.innerText = "archiver";
+    } else if (cargo.cargoStatus == "archived") {
+      upgrade.innerText = "archived";
+    } else {
+      upgrade.innerText = "losted";
+    }
     let setStatus = document.getElementById("setStatus") as HTMLElement;
     setStatus.innerText = data![index].cargoStatus;
     let markLost = document.getElementById("markLost") as HTMLElement;
@@ -395,7 +616,7 @@ function showDetailCargo(index: number) {
       upgrade.classList.add("bg-gray-300");
       upgrade.classList.add("cursor-not-allowed");
       upgrade.classList.add("text-slate-800");
-      upgrade.innerText = " delivered";
+      upgrade.innerText = "archiver";
     }
   });
 
@@ -407,11 +628,22 @@ function showDetailCargo(index: number) {
         "data-indexProduct"
       ) as string;
       let indexCargo = deleteButton.getAttribute("data-indexCargo") as string;
-      data![indexCargo].removeProduct(indexProduct);
+      let message = data![indexCargo].removeProduct(indexProduct);
+      document.getElementById("messageBody")!.innerText = message;
+      document.getElementById("message")!.classList.add("right-2");
+      document.getElementById("message")!.classList.add("top-2");
+      setTimeout(() => {
+        document.getElementById("message")!.classList.remove("right-2");
+        document.getElementById("message")!.classList.remove("top-2");
+      }, 2000);
       deleteButton.parentElement!.remove();
       sendToJson();
       donnee = data!.slice(page * el, page * el + el);
-      displayListCargos();
+      if (document.getElementById("cardContainer")?.style.display == "flex") {
+        displayListCargos();
+      } else {
+        displayCargosCard();
+      }
     });
   });
 
@@ -488,6 +720,41 @@ function getProduct() {
   sender.reset();
   receiver.reset();
   return newProduct;
+}
+
+function validatePhoneNumber(phoneNumber: any) {
+  const phoneRegex = /^(77|78|76|70|75)\d{7}$/;
+  return phoneRegex.test(phoneNumber);
+}
+
+function validate(form: string) {
+  let invalid = false;
+  let inputs = document.querySelector(form) as HTMLFormElement;
+  for (let index = 0; index < inputs.length; index++) {
+    let input = inputs[index] as HTMLInputElement;
+    if (input.value.trim() == "") {
+      input.style.border = "1px solid red";
+      invalid = true;
+    }
+    inputs[index].addEventListener("input", (e: any) => {
+      if (e.target.value.trim() != "") {
+        e.target.style.border = "1px solid grey";
+      } else {
+        input.style.border = "1px solid red";
+        invalid = true;
+      }
+      if (e.target.name == "receiverPhone" || e.target.name == "clientPhone") {
+        console.log(validatePhoneNumber(e.target.value));
+
+        if (validatePhoneNumber(e.target.value) == false) {
+          console.log(e.target);
+          invalid = true;
+          e.target.style.border = "1px solid red";
+        }
+      }
+    });
+  }
+  return invalid;
 }
 
 function getProductType() {
@@ -604,12 +871,11 @@ function createCargoFromForm() {
     cargoType
   );
 
-  // createCargoCard(cargo);
-  //   displayCargosCard();
+  data.push(cargo);
 
   sendToJson();
 
-  fetchData();
+  // fetchData();
 }
 
 function isDateLate(dateString: string): boolean {
@@ -624,36 +890,42 @@ function displayCargosCard() {
   let cardContainer = document.getElementById("cardContainer") as HTMLElement;
   cardContainer.style.display = "grid";
   cardContainer.innerHTML = "";
-  let cards = data!
+  let cards = cardData!
     .map((element: any, index: number) => {
-      return `<div class="Card container md:max-w-56 lg:max-w-56 bg-gray-300 p-2 rounded flex flex-col gap-2" >
-    <div class="flex justify-between items-center" >
-        <div>
-          <p>Cargo ${element.id}</p>
-        </div>
-        <div>
-            <p class="px-2 py-1 bg-green-500 text-white rounded text-center">${element.cargoType}</p>
+      return `<div class="Card container md:max-w-56 lg:max-w-56 bg-gray-200 p-2 rounded flex flex-col gap-2 shadow-lg text-slate-700">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-2">
+        <p class="text-xl font-semibold">Cargo ${element.id}</p>
+        <p class="px-3 py-1 bg-green-500 text-white rounded">${element.cargoType}</p>
+    </div>
+
+    <!-- Image Section -->
+    <div class="mb-2">
+        <img src="./img/${element.cargoType}.png" alt="${element.cargoType} Image" class="w-full h-40 object-cover rounded-lg">
+    </div>
+
+    <!-- Weight Section -->
+    <div class="flex justify-between items-center mb-2">
+        <p class="text-lg font-medium">${element.totalWeight} / ${element.cargoMaxWeight} kg</p>
+        <div class="relative" id="showAction" data-index="${index}">
+            <div class="border absolute rounded bg-white shadow-lg min-w-44 -left-32 hidden z-10">
+                <p class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="ajouterProduit" data-idCargo="${element.id}">Add Product</p>
+                <p class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-detailId="${index}" id="detailSlider">Show Details</p>
+                <p class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Start Cargo</p>
+                <p class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Archive</p>
+            </div>
+            <i class="fa-solid fa-ellipsis cursor-pointer"></i>
         </div>
     </div>
-    <div>
-        <img src="./img/${element.cargoType}.png" alt="">
+
+    <!-- Route Section -->
+    <div class="flex justify-between items-center text-lg">
+        <p class=" text-blue-700  rounded-full">${element.from}</p>
+        <p class="text-2xl font-bold text-gray-600">→</p>
+        <p class=" text-blue-700  rounded-full">${element.to}</p>
     </div>
-    <div class="flex justify-between">
-        <p >${element.totalWeight}/${element.cargoMaxWeight} kg</p>
-        <div class="relative " id="showAction" data-index="${index}">
-        <div class="border absolute rounded bg-white min-w-44 -left-32 hidden">
-            <p class="px-6 py-1 border-t" id="ajouterProduit" data-idCargo="${element.id}">Add Product</p>
-            <p class="px-6 py-1 border-t" data-detailId="${index}" id="detailSlider">Show details</p>
-            <p class="px-6 py-1 border-t">Start cargo</p>
-            <p class="px-6 py-1 border-t">Archive</p>
-        </div>
-            <i  class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
-    <div class="flex justify-between">
-        <p class="px-2 py-1 bg-slate-500 text-white rounded text-center" >${element.cargoGlobalState}</p>
-    </div>
-</div>`;
+</div>
+`;
     })
     .join("");
 
@@ -686,6 +958,9 @@ function displayCargosCard() {
     element.addEventListener("click", () => {
       let index = parseInt(element.getAttribute("data-index")!);
       showAction(element);
+      // document.getElementById("cardContainer")!.addEventListener("click", (e) => {
+      //   element.firstElementChild?.classList.add("hidden");
+      // })
     });
   });
 }
@@ -731,6 +1006,7 @@ function openAddProduct(index: number, typeOfCargo: CargoType) {
       "clientAddress"
     ) as HTMLInputElement;
 
+    client;
     if (client.length > 0) {
       clientName.value = client[0]["client"].name;
       clientLastName.value = client[0]["client"].surname;
@@ -752,6 +1028,7 @@ function displayListCargos() {
   cardContainer.innerHTML = "";
   let cards = donnee
     .map((element: any, index: number) => {
+      let id = data.findIndex((e: any) => e.id == element.id);
       return `<tr class="group">
       <td>${element.id}</td>
       <td>${element.cargoType}</td>
@@ -766,7 +1043,7 @@ function displayListCargos() {
       <button class="rounded-full group-hover:flex border w-6 h-6 border-black border-solid items-center justify-center hidden" id="ajouterProduitList" data-idCargo="${element.id}">
       <i class="fa text-gray-700 fa-plus " aria-hidden="true"></i>
       </button>
-      <button class="rounded-full group-hover:flex border  border-black border-solid items-center justify-center hidden w-6 h-6" data-detailId="${index}" id="detailSliderList">
+      <button class="rounded-full group-hover:flex border  border-black border-solid items-center justify-center hidden w-6 h-6" data-detailId="${id}" id="detailSliderList">
       <i class="fa text-gray-700 fa-info" aria-hidden="true" ></i>
       </button>
       </td>
@@ -876,11 +1153,12 @@ async function fetchData() {
     });
 
     donnee = data.slice(page * el, page * el + el);
+    cardData = data;
 
     if (document.getElementById("cardContainer")?.style.display == "flex") {
-      displayCargosCard();
-    } else {
       displayListCargos();
+    } else {
+      displayCargosCard();
     }
 
     filter();
@@ -998,7 +1276,7 @@ function transformToCargo(object: any) {
 
 function transformToProduct(object: any) {
   if (object.productType == "Food") {
-    return FoodProduct.createProduct(
+    let product = FoodProduct.createProduct(
       object.id,
       object.name,
       object.weight,
@@ -1006,8 +1284,10 @@ function transformToProduct(object: any) {
       object.receiver as User,
       object.productType
     );
+    product.productPrice = object.price;
+    return product;
   } else if (object.productType == "Chemical") {
-    return new ChemicalProduct(
+    let product = new ChemicalProduct(
       object.id,
       object.name,
       object.weight,
@@ -1016,8 +1296,10 @@ function transformToProduct(object: any) {
       object.productType,
       object.tonicity as Tonicity
     );
+    product.productPrice = object.price;
+    return product;
   } else {
-    return MaterialProduct.createProduct(
+    let product = MaterialProduct.createProduct(
       object.id,
       object.name,
       object.weight,
@@ -1026,6 +1308,8 @@ function transformToProduct(object: any) {
       object.productType,
       object.productSolidity
     );
+    product.productPrice = object.price;
+    return product;
   }
 }
 
@@ -1071,7 +1355,6 @@ function transformToProduct(object: any) {
 //       });
 //     });
 // }
-
 let listView = document.getElementById("listView") as HTMLElement;
 let cardView = document.getElementById("cardView") as HTMLElement;
 
@@ -1084,7 +1367,6 @@ cardView.addEventListener("click", () => {
 });
 
 let findProduct = document.getElementById("findProduct") as HTMLInputElement;
-console.log("frhzk");
 
 findProduct.addEventListener("input", () => {
   let product = data!.filter((element: any) => {
@@ -1093,18 +1375,85 @@ findProduct.addEventListener("input", () => {
   console.log(product);
 });
 
-
-async function sendEmail(text: any) {
+async function sendEmail(text: any, pdfBase64: string) {
   const templateParams = {
     to_email: "ochatobake@gmail.com",
-    subject: "added product",
-    message: `product id : ${text}`,
+    subject: "Added product",
+    message: `Product ID: ${text}`,
+    attachment: [
+      {
+        name: "yourfile.pdf",
+        data: pdfBase64,
+      },
+    ],
   };
 
   try {
-    const response = await emailjs.send('service_ihqi8ze', 'template_j89td5b', templateParams);
-    console.log('Email sent successfully:', response.status, response.text);
+    const response = await emailjs.send(
+      "service_ihqi8ze",
+      "template_j89td5b",
+      templateParams
+    );
+    console.log("Email sent successfully:", response.status, response.text);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
   }
+}
+
+function generateRecipePDF(product: Product): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(22);
+    doc.text("Recu de livraison", 105, 20, { align: "center" });
+
+    // Product details
+    doc.setFontSize(16);
+    doc.text("Détails du produit:", 20, 40);
+    doc.setFontSize(12);
+    doc.text(`Identifiant: ${product.ProductID}`, 20, 30);
+    doc.text(`Nom du produit: ${product.productName}`, 20, 50);
+    doc.text(`Poids: ${product.ProductWeight} kg`, 20, 60);
+    doc.text(`Type de produit: ${product.getproductType}`, 20, 70);
+    doc.text(`Statut du produit: ${product.ProductStatus}`, 20, 80);
+    doc.text(`Prix: $${product.getPrice()}`, 20, 90);
+
+    doc.line(20, 35, 190, 35);
+
+    // Client details
+    doc.setFontSize(16);
+    doc.text("Détails du client:", 20, 100);
+    doc.setFontSize(12);
+    doc.text(
+      `Nom du client: ${product.productClient.surname} ${product.productClient.name}`,
+      20,
+      110
+    );
+    doc.text(`Téléphone: ${product.productClient.phone}`, 20, 120);
+    doc.text(`Adresse: ${product.productClient.address}`, 20, 130);
+
+    doc.line(20, 35, 190, 35);
+
+    // Receiver details
+    doc.setFontSize(16);
+    doc.text("Détails du destinataire:", 20, 140);
+    doc.setFontSize(12);
+    doc.text(
+      `Nom du destinataire: ${product.productReceiver.surname} ${product.productReceiver.name}`,
+      20,
+      150
+    );
+    doc.text(`Téléphone: ${product.productReceiver.phone}`, 20, 160);
+    doc.text(`Adresse: ${product.productReceiver.address}`, 20, 170);
+
+    doc.setFontSize(12);
+    doc.text("Cargo du monde", 190, 200, { align: "right" });
+
+    // Convert to base64 string
+    doc.save(`${product.productName}.pdf`);
+    const pdfBase64 = doc.output("datauristring").split(",")[1];
+    resolve(pdfBase64);
+  });
 }

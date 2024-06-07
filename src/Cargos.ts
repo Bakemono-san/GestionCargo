@@ -1,21 +1,29 @@
+// import { sendMessage } from "./index.js";
+
 export type CargoType = "Aerial" | "Maritime" | "Road";
 export type State = "closed" | "open";
-export type Status = "loading" | "transporting" | "delivered" | "lost";
+export type Status =
+  | "loading"
+  | "transporting"
+  | "delivered"
+  | "lost"
+  | "archived"
+  | "arrived";
 export type fullIndicator = "weight" | "numberOfProduct";
 
 export class User {
   constructor(
-    protected name: string,
-    protected surname: string,
+    public name: string,
+    public surname: string,
     public phone: string,
-    protected address: string
+    public address: string
   ) {}
 }
 
 export class Product {
   protected productStatus: Status = "loading";
   static minPrice: number = 10000;
-  protected price: number = 0;
+  public price: number = 0;
 
   constructor(
     protected id: number,
@@ -25,6 +33,47 @@ export class Product {
     protected receiver: User,
     protected productType: string
   ) {}
+
+  deliver() {
+    this.productStatus = "delivered";
+    sendMessage(
+      `votre colis est arrivee.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+      this.clientNumber
+    );
+    sendMessage(
+      `votre colis est arrivee  .info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+      this.receiverNumber
+    );
+  }
+
+  markLost() {
+    this.productStatus = "lost";
+
+    sendMessage(
+      `votre colis a ete perdue.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+      "+221" + this.clientNumber
+    );
+    sendMessage(
+      `votre colis a ete perdue.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+      "+221" + this.receiverNumber
+    );
+  }
+
+  archive() {
+    this.productStatus = "archived";
+  }
+
+  get getproductType() {
+    return this.productType;
+  }
+
+  set productPrice(data: any) {
+    if (data >= 10000) {
+      this.price = data;
+    } else {
+      this.price = 10000;
+    }
+  }
 
   get productName() {
     return this.name;
@@ -42,12 +91,15 @@ export class Product {
     return this.client;
   }
 
-
   get productReceiver(): User {
     return this.receiver;
   }
 
   get clientNumber(): string {
+    return this.client.phone;
+  }
+
+  get receiverNumber(): string {
     return this.client.phone;
   }
 
@@ -69,12 +121,8 @@ export class Product {
     );
   }
 
-  getPrice(distance: number, price: number) {
-    if (distance * price >= 100000) {
-      return distance * price;
-    } else {
-      return 100000;
-    }
+  getPrice() {
+    return this.price;
   }
 
   static createProduct(
@@ -131,10 +179,6 @@ export class ChemicalProduct extends Product {
   ) {
     super(id, name, weight, client, receiver, productType);
   }
-
-  getPrice(distance: number) {
-    return distance * 500 + this.autreFrais;
-  }
 }
 
 export class MaterialProduct extends Product {
@@ -148,14 +192,6 @@ export class MaterialProduct extends Product {
     protected productSolidity: "breakable" | "unbreakable"
   ) {
     super(id, name, weight, client, receiver, productType);
-  }
-
-  getPrice(distance: number, price: number) {
-    if (distance * price >= 100000) {
-      return distance * price;
-    } else {
-      return 100000;
-    }
   }
 }
 
@@ -174,13 +210,6 @@ export class FoodProduct extends Product {
     protected productType: string
   ) {
     super(id, name, weight, client, receiver, productType);
-  }
-  getPrice(distance: number, price: number) {
-    if (distance * price + this.autreFrais >= 100000) {
-      return distance * price + this.autreFrais;
-    } else {
-      return 100000;
-    }
   }
 }
 
@@ -205,6 +234,14 @@ export class Cargo {
     protected cargoType: CargoType
   ) {}
 
+  get dateArrivee() {
+    return this.endingDate;
+  }
+
+  archive() {
+    this.status = "archived";
+  }
+
   get getId() {
     return this.id;
   }
@@ -216,29 +253,35 @@ export class Cargo {
   totalPrice() {
     let totalPrice = 0;
     for (let product of this.products) {
-      totalPrice += product.getPrice(this.distance, this.basePrice);
+      totalPrice += product.getPrice();
     }
     return totalPrice;
   }
 
-  addProduct(product: Product): void {
-    if (this.full) throw new Error("Cargo is full");
-    else if (this.fullIndicator == "numberOfProduct") {
-      this.products.push(product);
-      if (this.products.length >= this.maxWeight) {
-        this.full = true;
-        throw new Error("Cargo is full");
-      }
-    } else {
-      if (this.totalWeight >= this.maxWeight) {
-        this.full = true;
-        throw new Error("Cargo is full");
-      } else {
+  addProduct(product: Product): string|undefined {
+    if (this.globalState == "open") {
+      if (this.full) return "Cargo is full";
+      else if (this.fullIndicator == "numberOfProduct") {
         this.products.push(product);
-        if (this.totalWeight >= this.maxWeight) {
+        if (this.products.length >= this.maxWeight) {
           this.full = true;
         }
+        return "cargo added successfully";
+      } else {
+        if (this.totalWeight >= this.maxWeight) {
+          this.full = true;
+          return "Cargo is full";
+        } else {
+          this.products.push(product);
+          
+          if (this.totalWeight >= this.maxWeight) {
+            this.full = true;
+          }
+          return "cargo added successfully";
+        }
       }
+    }else{
+      return "error this Cargo is closed";
     }
   }
 
@@ -254,16 +297,36 @@ export class Cargo {
   }
 
   upgradeStatus() {
-    console.log(this.status);
 
     if (this.status == "loading") {
       if (this.products.length > 0) {
         this.status = "transporting";
+        this.globalState = "closed";
+        this.products.forEach((product) => {
+          product.ProductStatus = "transporting";
+        });
+        return "started , cargo is now in transit";
       } else {
         return "can't start an empty cargo";
       }
     } else if (this.status == "transporting") {
       this.status = "delivered";
+      this.products.forEach((product) => {
+        sendMessage(
+          "la cargaison contenant votre produit est arrivee veuillez venir le recuperer ",
+          product.clientNumber
+        );
+        sendMessage(
+          "la cargaison contenant votre produit est arrivee veuillez venir le recuperer",
+          product.receiverNumber
+        );
+        return "sending email..."
+      });
+      this.products.forEach((product) => {
+        product.ProductStatus = "transporting";
+      });
+    } else if (this.status == "delivered") {
+      this.status = "archived";
     }
   }
 
@@ -289,17 +352,26 @@ export class Cargo {
     })!;
   }
 
-  removeProduct(index: number): void {
+  removeProduct(index: number) {
     if (this.cargoGlobalState == "open") this.products.splice(index, 1);
+    return "product removed successfully";
   }
 
   getProduct(index: number): Product {
     return this.products[index];
   }
 
+  markProductLost(index: number) {
+    this.products[index].markLost();
+    return "product marked as lost";
+  }
+
   markLost(): void {
     this.status = "lost";
     this.cargoGlobalState = "closed";
+    this.products.forEach((product) => {
+      product.ProductStatus = "lost";
+    });
   }
 
   set cargoStatus(status: Status) {
@@ -415,23 +487,52 @@ export class Cargo {
 export class RoadCargo extends Cargo {
   protected foodPrice: number = 100;
   protected matPrice: number = 200;
-  addProduct(product: Product): void {
+  addProduct(product: Product): string|undefined {
+    if (product instanceof FoodProduct) {
+      product.price = this.foodPrice * this.distance;
+    } else if (product instanceof MaterialProduct) {
+      product.price = this.matPrice * this.distance;
+    }
+
     if (product instanceof ChemicalProduct) {
-      throw new Error("Chemical products are not allowed in road cargo");
+      return "Chemical products are not allowed in road cargo";
     } else {
-      super.addProduct(product);
+      if (this.globalState == "open") {
+        if (this.full) return "Cargo is full";
+        else if (this.fullIndicator == "numberOfProduct") {
+          this.products.push(product);
+          if (this.products.length >= this.maxWeight) {
+            this.full = true;
+          }
+          return "cargo added successfully";
+        } else {
+          if (this.totalWeight >= this.maxWeight) {
+            this.full = true;
+            return "error this Cargo is full";
+          } else {
+            this.products.push(product);
+            
+            if (this.totalWeight >= this.maxWeight) {
+              this.full = true;
+            }
+            return "cargo added successfully";
+          }
+        }
+      }else{
+        return "error this Cargo is closed";
+      }
     }
   }
 
   totalPrice(): number {
     let totalPrice: number = 0;
     this.products.forEach((product) => {
-      if(product instanceof FoodProduct) {
-        totalPrice += product.getPrice(this.distance, this.foodPrice);
-      }else if(product instanceof MaterialProduct) {
-        totalPrice += product.getPrice(this.distance, this.matPrice);
-      }else {
-        totalPrice += product.getPrice(this.distance, 0)
+      if (product instanceof FoodProduct) {
+        totalPrice += product.productPrice;
+      } else if (product instanceof MaterialProduct) {
+        totalPrice += product.productPrice;
+      } else {
+        totalPrice += product.productPrice;
       }
     });
 
@@ -440,27 +541,54 @@ export class RoadCargo extends Cargo {
 }
 
 export class MaritimeCargo extends Cargo {
-
   protected foodPrice: number = 90;
   protected matPrice: number = 400;
-  addProduct(product: Product): void {
-    if (product instanceof Breakable) {
-      throw new Error("Breakable products are not allowed in maritime cargo");
+  addProduct(product: Product): string|undefined {
+ 
+    if (product instanceof FoodProduct) {
+      product.price = this.foodPrice * this.distance;
+    } else if (product instanceof MaterialProduct) {
+      product.price = this.matPrice * this.distance;
     } else {
-      super.addProduct(product);
+      product.price = 500 * this.distance + 15000;
+    }
+
+    console.log(product.productPrice, this.foodPrice * this.distance);
+
+    if (product instanceof Breakable) {
+      return "error Breakable products are not allowed in maritime cargo";
+    } else {
+      if (this.globalState == "open") {
+        if (this.full) return "error this Cargo is full";
+        else if (this.fullIndicator == "numberOfProduct") {
+          this.products.push(product);
+          if (this.products.length >= this.maxWeight) {
+            this.full = true;
+          }
+          return "cargo added successfully";
+        } else {
+          if (this.totalWeight >= this.maxWeight) {
+            this.full = true;
+            return "error this Cargo is full";
+          } else {
+            this.products.push(product);
+            
+            if (this.totalWeight >= this.maxWeight) {
+              this.full = true;
+            }
+            return "cargo added successfully";
+          }
+        }
+      }else{
+        return "error this Cargo is closed";
+      }
     }
   }
 
   totalPrice(): number {
     let totalPrice: number = 0;
     this.products.forEach((product) => {
-      if(product instanceof FoodProduct) {
-        totalPrice += product.getPrice(this.distance, this.foodPrice);
-      }else if(product instanceof MaterialProduct) {
-        totalPrice += product.getPrice(this.distance, this.matPrice);
-      }else {
-        totalPrice += product.getPrice(this.distance, 0)
-      }
+      totalPrice += product.productPrice;
     });
 
     return totalPrice;
@@ -470,26 +598,84 @@ export class MaritimeCargo extends Cargo {
 export class AerialCargo extends Cargo {
   protected foodPrice: number = 300;
   protected matPrice: number = 1000;
-  addProduct(product: Product): void {
+  addProduct(product: Product): string|undefined {
+    if (product instanceof FoodProduct) {
+      product.price = this.foodPrice * this.distance;
+    } else if (product instanceof MaterialProduct) {
+      product.price = this.matPrice * this.distance;
+    }
+    console.log(product, this.foodPrice * this.distance);
+
     if (product instanceof ChemicalProduct) {
-      throw new Error("Chemical products are not allowed in road cargo");
+     return "Chemical products are not allowed in road cargo";
     } else {
-      super.addProduct(product);
+      if (this.globalState == "open") {
+        if (this.full) return "Cargo is full";
+        else if (this.fullIndicator == "numberOfProduct") {
+          this.products.push(product);
+          if (this.products.length >= this.maxWeight) {
+            this.full = true;
+          }
+          return "cargo added successfully";
+        } else {
+          if (this.totalWeight >= this.maxWeight) {
+            this.full = true;
+            return "error Cargo is full";
+          } else {
+            this.products.push(product);
+            
+            if (this.totalWeight >= this.maxWeight) {
+              this.full = true;
+            }
+            return "cargo added successfully";
+          }
+        }
+      }else{
+        return "error this Cargo is closed";
+      }
     }
   }
 
   totalPrice(): number {
     let totalPrice: number = 0;
     this.products.forEach((product) => {
-      if(product instanceof FoodProduct) {
-        totalPrice += product.getPrice(this.distance, this.foodPrice);
-      }else if(product instanceof MaterialProduct) {
-        totalPrice += product.getPrice(this.distance, this.matPrice);
-      }else {
-        totalPrice += product.getPrice(this.distance, 0)
-      }
+      console.log(product);
+
+      totalPrice += product.productPrice;
     });
 
     return totalPrice;
   }
+}
+
+export function sendMessage(message: string, to: string) {
+  const myHeaders: HeadersInit = new Headers();
+  myHeaders.append(
+    "Authorization",
+    "App 853ade41efa2b52f62802f7c24c9adb5-85424141-bfb5-41a2-922d-8269e650ef73"
+  );
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Accept", "application/json");
+
+  const raw: string = JSON.stringify({
+    messages: [
+      {
+        destinations: [{ to: to }],
+        from: "ServiceSMS",
+        text: message,
+      },
+    ],
+  });
+
+  const requestOptions: RequestInit = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  fetch("https://ggm1rj.api.infobip.com/sms/2/text/advanced", requestOptions)
+    .then((response: Response) => response.text())
+    .then((result: string) => console.log(result))
+    .catch((error: any) => console.error(error));
 }

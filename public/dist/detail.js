@@ -23,13 +23,22 @@ async function fetchData() {
 }
 function transformToProduct(object) {
     if (object.productType == "Food") {
-        return FoodProduct.createProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType);
+        let product = FoodProduct.createProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType);
+        product.price = object.price;
+        product.ProductStatus = object.productStatus;
+        return product;
     }
     else if (object.productType == "Chemical") {
-        return new ChemicalProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType, object.tonicity);
+        let product = new ChemicalProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType, object.tonicity);
+        product.price = object.price;
+        product.ProductStatus = object.productStatus;
+        return product;
     }
     else {
-        return MaterialProduct.createProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType, object.productSolidity);
+        let product = MaterialProduct.createProduct(object.id, object.name, object.weight, object.client, object.receiver, object.productType, object.productSolidity);
+        product.ProductStatus = object.productStatus;
+        product.price = object.price;
+        return product;
     }
 }
 function transformToCargo(object) {
@@ -59,68 +68,82 @@ function getProduct(id) {
     data.forEach((Element) => {
         if (Element.searchProduct(parseInt(id))) {
             product = Element.searchProduct(parseInt(id));
-        }
-    });
-    console.log(product);
-    let model = `<div class="flex-1 p-8 text-gray-500 flex flex-col justify-between">
-    <div class="flex justify-between">
-        <h1 class="text-2xl">Cargo ${product.ProductID} </h1>
-        <p class="px-2 py-1 rounded text-center">name: ${product.productName}</p>
-    </div>
-
-    <div class="flex justify-between">
-    <div>
-        <h1 class="text-xl">weight : </h1>
-        <p>${product.ProductWeight} kg</p>
-    </div>
-    <div>
-        <h1 class="text-xl">price : </h1>
-        <p>${product.getPrice()} fcfa</p>
+            console.log(product);
+            let model = `<div class="mx-auto w-full max-w-4xl p-8 bg-white rounded-lg shadow-2xl text-gray-800 space-y-8">
+      <!-- Top Details Section -->
+      <div class="flex flex-col items-center text-center p-6 border-b border-gray-200">
+        <h1 class="text-3xl font-semibold mb-4">Product ID: ${product.ProductID}</h1>
+        <p class="text-2xl font-medium mb-2">Name: ${product.productName}</p>
+        <div class="flex space-x-8 justify-center gap-8">
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Weight:</h2>
+            <p class="mt-1">${product.ProductWeight} kg</p>
+          </div>
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Status:</h2>
+            <p class="mt-1 px-2 py-1 bg-yellow-500 text-white rounded">${product.ProductStatus}</p>
+          </div>
+          <div class="text-center">
+            <h2 class="text-xl font-semibold">Price:</h2>
+            <p class="mt-1">${product.productPrice} FCFA</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Bottom Section: Client and Receiver Info -->
+      <div class="flex space-x-6">
+        <!-- Client Section -->
+        <div class="w-1/2 p-6 bg-gray-50 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold mb-4 text-gray-700 border-b border-gray-300 pb-2">Client</h2>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Name:</h3>
+            <p class="mt-1 px-4 py-2 bg-gray-200 text-gray-900 rounded">${product.productClient.name}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Phone:</h3>
+            <p class="mt-1">${product.productClient.phone}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Address:</h3>
+            <p class="mt-1">${product.productClient.address}</p>
+          </div>
+        </div>
+    
+        <!-- Receiver Section -->
+        <div class="w-1/2 p-6 bg-gray-50 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold flex items-center gap-4 mb-4 text-gray-700 border-b border-gray-300 pb-2">Receiver</h2>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Name:</h3>
+            <p class="mt-1 px-4 py-2 bg-green-200 text-gray-900 rounded">${product.productReceiver.name}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Phone:</h3>
+            <p class="mt-1">${product.productReceiver.phone}</p>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-lg font-medium">Address:</h3>
+            <p class="mt-1">${product.productReceiver.address}</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Recuperer Button -->
+      <div class="flex justify-center pt-4">
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+          Recuperer
+        </button>
+      </div>
     </div>
     
-    </div>
-    <div class="flex justify-between">
-    <div>
-    <h1 class="text-xl">client name : </h1>
-    <p class="px-2 py-1 bg-gray-500 text-white rounded text-center" id="setStatus">${product.productClient.name}</p>
-</div><div>
-<h1 class="text-xl">receiver name : </h1>
-<p class="px-2 py-1 bg-green-500 text-white rounded text-center cursor-pointer" id="setGlobalState">${product.productReceiver.name}</p>
-</div>
-    </div>
-
-    <div class="flex justify-between">
-
-        <div>
-            <h1 class="text-xl">client phone : </h1>
-            <p>${product.productClient.phone}</p>
-        </div>
-
-        <div>
-            <h1 class="text-xl">receiver phone : </h1>
-            <p>${product.productReceiver.phone}</p>
-        </div>
-    </div>
-
-    <div class="flex justify-between">
-
-        <div>
-            <h1 class="text-xl">client Address : </h1>
-            <p>${product.productClient.address}</p>
-        </div>
-
-        <div>
-            <h1 class="text-xl">receiver Address : </h1>
-            <p>${product.productReceiver.address}</p>
-        </div>
-    </div>
-
-</div>
-`;
-    detail.innerHTML = model;
+      
+      `;
+            detail.innerHTML = model;
+        }
+    });
 }
 let findProduct = document.getElementById("findProduct");
+let detail = document.getElementById("detail");
+findProduct.value = "";
 findProduct?.addEventListener("input", () => {
     getProduct(findProduct.value);
 });
-let detail = document.getElementById("detail");

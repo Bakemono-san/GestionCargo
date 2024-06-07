@@ -1,0 +1,67 @@
+<div class="mx-auto w-full p-8 bg-white rounded-lg shadow-xl text-gray-800 flex flex-col space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b pb-4">
+        <h1 class="text-3xl font-semibold">Product ID: ${product.ProductID}</h1>
+        <p class="px-4 py-2 text-3xl font-semibold text-center">Name: ${product.productName}</p>
+    </div>
+  
+    <!-- Product Details -->
+    <div class="flex justify-between space-x-6">
+        <div>
+            <h2 class="text-xl font-semibold">Weight:</h2>
+            <p class="mt-1">${product.ProductWeight} kg</p>
+        </div>
+        <div>
+            <h2 class="text-xl font-semibold">Status:</h2>
+            <p class="mt-1 px-2 py-1 bg-yellow-500 text-white rounded text-center">${product.ProductStatus}</p>
+            </div>
+        <div>
+            <h2 class="text-xl font-semibold">Price:</h2>
+            <p class="mt-1">${product.productPrice} FCFA</p>
+        </div>
+    </div>
+  
+  
+    <!-- Client and Receiver Details -->
+    <div class="flex justify-between space-x-6">
+        <div>
+            <h2 class="text-xl font-semibold">Client Name:</h2>
+            <p class="mt-1 px-4 py-2 bg-gray-500 text-white rounded text-center">${product.productClient.name}</p>
+        </div>
+        <div>
+            <h2 class="text-xl font-semibold">Receiver Name:</h2>
+            <p class="mt-1 px-4 py-2 bg-green-500 text-white rounded text-center cursor-pointer">${product.productReceiver.name}</p>
+        </div>
+    </div>
+  
+    <!-- Phone Numbers -->
+    <div class="flex justify-between space-x-6">
+        <div>
+        <h2 class="text-xl font-semibold">Client Phone:</h2>
+        <p class="mt-1">${product.clientNumber}</p>
+        </div>
+        <div>
+        <h2 class="text-xl font-semibold">Receiver Phone:</h2>
+        <p class="mt-1">${product.receiverNumber}</p>
+        </div>
+    </div>
+  
+    <!-- Addresses -->
+    <div class="flex justify-between space-x-6">
+        <div>
+            <h2 class="text-xl font-semibold">Client Address:</h2>
+            <p class="mt-1">${product.productClient.address}</p>
+        </div>
+        <div>
+            <h2 class="text-xl font-semibold">Receiver Address:</h2>
+            <p class="mt-1">${product.productReceiver.address}</p>
+        </div>
+        </div>
+        
+        <!-- Recuperer Button -->
+        <div class="flex justify-center pt-4">
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300">
+        Recuperer
+        </button>
+        </div>
+        </div>

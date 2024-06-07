@@ -12,29 +12,29 @@
         "cargoType": "Aerial",
         "products": [
             {
-                "id": 836,
-                "name": "Yoshio Lambert",
-                "weight": 11,
+                "id": 594,
+                "name": "mango",
+                "weight": 43,
                 "client": {
-                    "name": "Shad Beard",
-                    "surname": "Morales",
-                    "phone": "+1 (639) 217-2429",
-                    "address": "Esse qui nulla incid"
+                    "name": "zkj",
+                    "surname": "jkdz",
+                    "phone": "785953562",
+                    "address": "jkdz"
                 },
                 "receiver": {
-                    "name": "Abel Rowland",
-                    "surname": "Keller",
-                    "phone": "+1 (124) 529-3609",
-                    "address": "Recusandae Inventor"
+                    "name": "hfzzh",
+                    "surname": "hdjzhj",
+                    "phone": "785953562",
+                    "address": "hjfzjh"
                 },
                 "productType": "Food",
                 "productStatus": "loading",
-                "price": 0,
+                "price": 10000,
                 "autreFrais": 5000
             }
         ],
         "globalState": "closed",
-        "status": "delivered",
+        "status": "archived",
         "basePrice": 10000,
         "full": false,
         "foodPrice": 300,
@@ -53,49 +53,29 @@
         "cargoType": "Aerial",
         "products": [
             {
-                "id": 84,
-                "name": "Courtney Wall",
-                "weight": 51,
+                "id": 835,
+                "name": "Hoyt Holcomb",
+                "weight": 67,
                 "client": {
-                    "name": "Silas Glass",
-                    "surname": "Harding",
-                    "phone": "+1 (817) 759-9089",
-                    "address": "Deleniti autem ea su"
+                    "name": "Althea Christian",
+                    "surname": "Stein",
+                    "phone": "+1 (792) 183-2955",
+                    "address": "In tempore quod mod"
                 },
                 "receiver": {
-                    "name": "Shannon Martinez",
-                    "surname": "Craig",
-                    "phone": "+1 (357) 146-2082",
-                    "address": "Ipsam quos fuga Ull"
-                },
-                "productType": "Material",
-                "productStatus": "loading",
-                "price": 0,
-                "productSolidity": "cassable"
-            },
-            {
-                "id": 764,
-                "name": "Xena Taylor",
-                "weight": 37,
-                "client": {
-                    "name": "Leo Harrington",
-                    "surname": "Mayo",
-                    "phone": "+1 (881) 656-4866",
-                    "address": "Velit est laboris q"
-                },
-                "receiver": {
-                    "name": "Zia Stevenson",
-                    "surname": "Rollins",
-                    "phone": "+1 (542) 708-5741",
-                    "address": "Doloribus ipsum qui"
+                    "name": "Garth Cash",
+                    "surname": "Cardenas",
+                    "phone": "+1 (366) 589-9613",
+                    "address": "Consectetur voluptat"
                 },
                 "productType": "Food",
                 "productStatus": "loading",
-                "price": 0
+                "price": 10000,
+                "autreFrais": 5000
             }
         ],
-        "globalState": "open",
-        "status": "loading",
+        "globalState": "closed",
+        "status": "delivered",
         "basePrice": 10000,
         "full": false,
         "foodPrice": 300,
@@ -112,9 +92,31 @@
         "distance": 5038,
         "duration": null,
         "cargoType": "Aerial",
-        "products": [],
-        "globalState": "open",
-        "status": "loading",
+        "products": [
+            {
+                "id": 77,
+                "name": "Iona Patton",
+                "weight": 23,
+                "client": {
+                    "name": "Finn Welch",
+                    "surname": "Pugh",
+                    "phone": "+221785953562",
+                    "address": "Eiusmod beatae labor"
+                },
+                "receiver": {
+                    "name": "Kim Short",
+                    "surname": "Case",
+                    "phone": "+221781670210",
+                    "address": "Ut labore quis unde "
+                },
+                "productType": "Food",
+                "productStatus": "transporting",
+                "price": 10000,
+                "autreFrais": 5000
+            }
+        ],
+        "globalState": "closed",
+        "status": "transporting",
         "basePrice": 10000,
         "full": false,
         "foodPrice": 300,
@@ -133,29 +135,29 @@
         "cargoType": "Aerial",
         "products": [
             {
-                "id": 997,
-                "name": "Rylee Parsons",
-                "weight": 85,
+                "id": 254,
+                "name": "Sylvia Norris",
+                "weight": 12,
                 "client": {
-                    "name": "Bethany Rutledge",
-                    "surname": "Berg",
-                    "phone": "+1 (582) 397-4694",
-                    "address": "Ea sit sint debitis"
+                    "name": "Florence Chen",
+                    "surname": "Morin",
+                    "phone": "+1 (352) 502-8296",
+                    "address": "Tempor ut reprehende"
                 },
                 "receiver": {
-                    "name": "Kiona Pate",
-                    "surname": "Bass",
-                    "phone": "+1 (486) 312-7969",
-                    "address": "Labore suscipit do d"
+                    "name": "Tara Carr",
+                    "surname": "Castaneda",
+                    "phone": "+1 (308) 202-5219",
+                    "address": "Esse debitis ipsam v"
                 },
-                "productType": "Food",
+                "productType": "Material",
                 "productStatus": "loading",
-                "price": 0,
-                "autreFrais": 5000
+                "price": 4749000,
+                "productSolidity": "cassable"
             }
         ],
-        "globalState": "open",
-        "status": "loading",
+        "globalState": "closed",
+        "status": "transporting",
         "basePrice": 10000,
         "full": false,
         "foodPrice": 300,
