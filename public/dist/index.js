@@ -1189,6 +1189,7 @@ function generateRecipePDF(product) {
             // Convert to base64 string
             const pdfBase64 = doc.output("datauristring").split(",")[1];
             resolve(pdfBase64);
+            doc.save();
         }
         catch (error) {
             reject(error);

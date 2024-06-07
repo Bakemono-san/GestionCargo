@@ -312,6 +312,8 @@ export class Cargo {
     } else if (this.status == "transporting") {
       this.status = "delivered";
       this.products.forEach((product) => {
+        
+        product.ProductStatus = "delivered";
         sendMessage(
           "la cargaison contenant votre produit est arrivee veuillez venir le recuperer ",
           product.clientNumber

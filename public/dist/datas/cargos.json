@@ -193,7 +193,8 @@
                 },
                 "productType": "Food",
                 "productStatus": "loading",
-                "price": 0
+                "price": 10000,
+                "autreFrais": 5000
             },
             {
                 "id": 482,
@@ -210,6 +211,27 @@
                     "surname": "Clay",
                     "phone": "781670210",
                     "address": "Eum aspernatur volup"
+                },
+                "productType": "Material",
+                "productStatus": "loading",
+                "price": 4749000,
+                "productSolidity": "cassable"
+            },
+            {
+                "id": 346,
+                "name": "Felix Gross",
+                "weight": 32,
+                "client": {
+                    "name": "Adrienne Moses",
+                    "surname": "Hardy",
+                    "phone": "785953562",
+                    "address": "Aliqua Est asperior"
+                },
+                "receiver": {
+                    "name": "Kaseem Oneal",
+                    "surname": "Weiss",
+                    "phone": "785953562",
+                    "address": "Dignissimos sequi la"
                 },
                 "productType": "Material",
                 "productStatus": "loading",
@@ -235,7 +257,49 @@
         "distance": 4749,
         "duration": null,
         "cargoType": "Aerial",
-        "products": [],
+        "products": [
+            {
+                "id": 266,
+                "name": "Morgan Mcintosh",
+                "weight": 12,
+                "client": {
+                    "name": "Keiko Blake",
+                    "surname": "Christensen",
+                    "phone": "785953562",
+                    "address": "Est nisi quia minim"
+                },
+                "receiver": {
+                    "name": "Fredericka Chan",
+                    "surname": "Cross",
+                    "phone": "785953562",
+                    "address": "Sint est alias eiusm"
+                },
+                "productType": "Material",
+                "productStatus": "loading",
+                "price": 4749000,
+                "productSolidity": "cassable"
+            },
+            {
+                "id": 738,
+                "name": "Meghan Coleman",
+                "weight": 95,
+                "client": {
+                    "name": "Keiko Blake",
+                    "surname": "Christensen",
+                    "phone": "785953562",
+                    "address": "Est nisi quia minim"
+                },
+                "receiver": {
+                    "name": "Kimberley Byers",
+                    "surname": "Brock",
+                    "phone": "785953562",
+                    "address": "Ullamco et nulla ab "
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 0
+            }
+        ],
         "globalState": "open",
         "status": "loading",
         "basePrice": 10000,
