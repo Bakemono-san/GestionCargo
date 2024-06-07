@@ -25,7 +25,7 @@
                         <i class="fa fa-search" aria-hidden="true"></i>
                         <input type="text" class="outline-none w-full" placeholder="Que cherchez vous?">
                     </div>
-                    
+
                 </div>
             </div>
             <div class="flex-1 flex justify-end items-center gap-2 w-24">
@@ -292,7 +292,7 @@
                 <p id="messageBody" class="text-white">cargo added successfully</p>
             </div>
             <div class="absolute h-screen bg-black/35 inset-0 hidden items-center justify-center" id="detailProduct">
-                
+
             </div>
         </main>
     </div>
