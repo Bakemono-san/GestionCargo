@@ -110,7 +110,7 @@
                     "address": "Ut labore quis unde "
                 },
                 "productType": "Food",
-                "productStatus": "transporting",
+                "productStatus": "loading",
                 "price": 10000,
                 "autreFrais": 5000
             }
@@ -174,7 +174,49 @@
         "distance": 4749,
         "duration": null,
         "cargoType": "Aerial",
-        "products": [],
+        "products": [
+            {
+                "id": 351,
+                "name": "tomate",
+                "weight": 51,
+                "client": {
+                    "name": "Meghan Kelley",
+                    "surname": "Craft",
+                    "phone": "+1 (303) 772-9748",
+                    "address": "Est laboris delectus"
+                },
+                "receiver": {
+                    "name": "Samantha Bryan",
+                    "surname": "Brock",
+                    "phone": "+1 (601) 697-9549",
+                    "address": "Architecto sunt aliq"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 0
+            },
+            {
+                "id": 482,
+                "name": "Felicia Benton",
+                "weight": 57,
+                "client": {
+                    "name": "Yoshi Hull",
+                    "surname": "Rowland",
+                    "phone": "785953562",
+                    "address": "Exercitation digniss"
+                },
+                "receiver": {
+                    "name": "Colby Silva",
+                    "surname": "Clay",
+                    "phone": "781670210",
+                    "address": "Eum aspernatur volup"
+                },
+                "productType": "Material",
+                "productStatus": "loading",
+                "price": 4749000,
+                "productSolidity": "cassable"
+            }
+        ],
         "globalState": "open",
         "status": "loading",
         "basePrice": 10000,

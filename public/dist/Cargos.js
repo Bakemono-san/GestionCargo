@@ -219,7 +219,7 @@ export class Cargo {
                 if (this.products.length >= this.maxWeight) {
                     this.full = true;
                 }
-                return "cargo added successfully";
+                return "product added successfully";
             }
             else {
                 if (this.totalWeight >= this.maxWeight) {
@@ -231,7 +231,7 @@ export class Cargo {
                     if (this.totalWeight >= this.maxWeight) {
                         this.full = true;
                     }
-                    return "cargo added successfully";
+                    return "product added successfully";
                 }
             }
         }
@@ -305,6 +305,10 @@ export class Cargo {
     markProductLost(index) {
         this.products[index].markLost();
         return "product marked as lost";
+    }
+    archiveProduct(index) {
+        this.products[index].archive();
+        return "product archived";
     }
     markLost() {
         this.status = "lost";

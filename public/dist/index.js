@@ -169,14 +169,16 @@ function toggleSlide(index) {
                 document.getElementById("message").classList.remove("right-2");
                 document.getElementById("message").classList.remove("top-2");
             }, 2000);
-            let message = {
-                sendMessage: "sendMessage",
-                id: product.ProductID,
-                clientInfo: [product.receiverNumber],
-            };
-            const pdfFile = await generateRecipePDF(product);
-            // sendEmail(product.ProductID, pdfFile);
-            // sendToJson();
+            if (res.includes("successfully")) {
+                let message = {
+                    sendMessage: "sendMessage",
+                    id: product.ProductID,
+                    clientInfo: [product.receiverNumber],
+                };
+                const pdfFile = await generateRecipePDF(product);
+                sendEmail(product.ProductID, pdfFile);
+                sendToJson();
+            }
         }
     });
 }
@@ -436,6 +438,9 @@ function showDetailCargo(index) {
         <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300" id="lostProduct">
           mark lost
         </button>
+        <button class="px-6 py-2 bg-yellow-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300" id="archiveProduct">
+          archiver
+        </button>
         <button class="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300" id="closeProduct">
           close
         </button>
@@ -444,6 +449,18 @@ function showDetailCargo(index) {
             let closeProduct = document.getElementById("closeProduct");
             closeProduct.addEventListener("click", () => {
                 detailProduct.style.display = "none";
+            });
+            let archiverProduct = document.getElementById("archiveProduct");
+            archiverProduct.addEventListener("click", () => {
+                let message = data[index].archiveProduct(indexproduct);
+                document.getElementById("messageBody").innerText = message;
+                document.getElementById('productStatus').innerText = data[index].getProduct(indexproduct).ProductStatus;
+                document.getElementById("message").classList.add("right-2");
+                document.getElementById("message").classList.add("top-2");
+                setTimeout(() => {
+                    document.getElementById("message").classList.remove("right-2");
+                    document.getElementById("message").classList.remove("top-2");
+                }, 2000);
             });
             let lostProduct = document.getElementById("lostProduct");
             lostProduct.addEventListener("click", () => {
@@ -1134,42 +1151,47 @@ async function sendEmail(text, pdfBase64) {
 }
 function generateRecipePDF(product) {
     return new Promise((resolve, reject) => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        // Title
-        doc.setFontSize(22);
-        doc.text("Recu de livraison", 105, 20, { align: "center" });
-        // Product details
-        doc.setFontSize(16);
-        doc.text("Détails du produit:", 20, 40);
-        doc.setFontSize(12);
-        doc.text(`Identifiant: ${product.ProductID}`, 20, 30);
-        doc.text(`Nom du produit: ${product.productName}`, 20, 50);
-        doc.text(`Poids: ${product.ProductWeight} kg`, 20, 60);
-        doc.text(`Type de produit: ${product.getproductType}`, 20, 70);
-        doc.text(`Statut du produit: ${product.ProductStatus}`, 20, 80);
-        doc.text(`Prix: $${product.getPrice()}`, 20, 90);
-        doc.line(20, 35, 190, 35);
-        // Client details
-        doc.setFontSize(16);
-        doc.text("Détails du client:", 20, 100);
-        doc.setFontSize(12);
-        doc.text(`Nom du client: ${product.productClient.surname} ${product.productClient.name}`, 20, 110);
-        doc.text(`Téléphone: ${product.productClient.phone}`, 20, 120);
-        doc.text(`Adresse: ${product.productClient.address}`, 20, 130);
-        doc.line(20, 35, 190, 35);
-        // Receiver details
-        doc.setFontSize(16);
-        doc.text("Détails du destinataire:", 20, 140);
-        doc.setFontSize(12);
-        doc.text(`Nom du destinataire: ${product.productReceiver.surname} ${product.productReceiver.name}`, 20, 150);
-        doc.text(`Téléphone: ${product.productReceiver.phone}`, 20, 160);
-        doc.text(`Adresse: ${product.productReceiver.address}`, 20, 170);
-        doc.setFontSize(12);
-        doc.text("Cargo du monde", 190, 200, { align: "right" });
-        // Convert to base64 string
-        doc.save(`${product.productName}.pdf`);
-        const pdfBase64 = doc.output("datauristring").split(",")[1];
-        resolve(pdfBase64);
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            // Title
+            doc.setFontSize(22);
+            doc.text("Reçu de livraison", 105, 20, { align: "center" });
+            // Client details (Top Left)
+            doc.setFontSize(16);
+            doc.text("Détails du client:", 20, 40);
+            doc.setFontSize(12);
+            doc.text(`Nom du client: ${product.productClient.surname} ${product.productClient.name}`, 20, 50);
+            doc.text(`Téléphone: ${product.productClient.phone}`, 20, 60);
+            doc.text(`Adresse: ${product.productClient.address}`, 20, 70);
+            // Receiver details (Top Right)
+            doc.setFontSize(16);
+            doc.text("Détails du destinataire:", 140, 40);
+            doc.setFontSize(12);
+            doc.text(`Nom du destinataire: ${product.productReceiver.surname} ${product.productReceiver.name}`, 140, 50);
+            doc.text(`Téléphone: ${product.productReceiver.phone}`, 140, 60);
+            doc.text(`Adresse: ${product.productReceiver.address}`, 140, 70);
+            // Product details (Bottom)
+            doc.setFontSize(16);
+            doc.text("Détails du produit:", 20, 110);
+            doc.setFontSize(12);
+            doc.text(`Identifiant: ${product.ProductID}`, 20, 120);
+            doc.text(`Nom du produit: ${product.productName}`, 20, 130);
+            doc.text(`Poids: ${product.ProductWeight} kg`, 20, 140);
+            doc.text(`Type de produit: ${product.getproductType}`, 20, 150);
+            doc.text(`Statut du produit: ${product.ProductStatus}`, 20, 160);
+            doc.text(`Prix: $${product.getPrice()}`, 20, 170);
+            // Signature
+            doc.setFontSize(12);
+            doc.text("Signature:", 20, 200);
+            doc.line(45, 198, 100, 198); // Line for signature
+            doc.text("Cargo du monde", 190, 200, { align: "right" });
+            // Convert to base64 string
+            const pdfBase64 = doc.output("datauristring").split(",")[1];
+            resolve(pdfBase64);
+        }
+        catch (error) {
+            reject(error);
+        }
     });
 }
