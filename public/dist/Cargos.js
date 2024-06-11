@@ -21,6 +21,7 @@ export class Product {
     productStatus = "loading";
     static minPrice = 10000;
     price = 0;
+    endDate = "";
     constructor(id, name, weight, client, receiver, productType) {
         this.id = id;
         this.name = name;
@@ -29,10 +30,29 @@ export class Product {
         this.receiver = receiver;
         this.productType = productType;
     }
+    recupere() {
+        this.productStatus = "recupere";
+    }
+    set setEndDate(date) {
+        this.endDate = date;
+    }
+    get getEndDate() {
+        return this.endDate;
+    }
+    get remainingDays() {
+        return daysBetweenDates(this.endDate);
+    }
     deliver() {
-        this.productStatus = "delivered";
-        sendMessage(`votre colis est arrivee.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.clientNumber);
-        sendMessage(`votre colis est arrivee  .info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.receiverNumber);
+        if (this.remainingDays <= 0) {
+            this.productStatus = "delivered";
+            sendMessage(`votre colis est arrivee.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.clientNumber);
+            sendMessage(`votre colis est arrivee  .info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.receiverNumber);
+        }
+        else {
+            this.productStatus = "late";
+            sendMessage(`votre colis est arrivee en retard.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.clientNumber);
+            sendMessage(`votre colis est arrivee en retard.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`, this.receiverNumber);
+        }
     }
     markLost() {
         this.productStatus = "lost";
@@ -152,7 +172,6 @@ export class FoodProduct extends Product {
     client;
     receiver;
     productType;
-    autreFrais = 5000;
     constructor(id, name, weight, client, receiver, productType) {
         super(id, name, weight, client, receiver, productType);
         this.id = id;
@@ -215,7 +234,7 @@ export class Cargo {
             if (this.full)
                 return "Cargo is full";
             else if (this.fullIndicator == "numberOfProduct") {
-                this.products.push(product);
+                this.products.unshift(product);
                 if (this.products.length >= this.maxWeight) {
                     this.full = true;
                 }
@@ -227,7 +246,7 @@ export class Cargo {
                     return "Cargo is full";
                 }
                 else {
-                    this.products.push(product);
+                    this.products.unshift(product);
                     if (this.totalWeight >= this.maxWeight) {
                         this.full = true;
                     }
@@ -265,13 +284,20 @@ export class Cargo {
         else if (this.status == "transporting") {
             this.status = "delivered";
             this.products.forEach((product) => {
-                product.ProductStatus = "delivered";
-                sendMessage("la cargaison contenant votre produit est arrivee veuillez venir le recuperer ", product.clientNumber);
-                sendMessage("la cargaison contenant votre produit est arrivee veuillez venir le recuperer", product.receiverNumber);
+                if (daysBetweenDates(this.endingDate) <= 0) {
+                    product.ProductStatus = "delivered";
+                    sendMessage("la cargaison contenant votre produit est arrivee veuillez venir le recuperer ", product.clientNumber);
+                    sendMessage("la cargaison contenant votre produit est arrivee veuillez venir le recuperer", product.receiverNumber);
+                }
+                else {
+                    product.ProductStatus = "late";
+                    sendMessage("la cargaison contenant votre produit est arrivee en retard veuillez venir le recuperer ", product.clientNumber);
+                    sendMessage("la cargaison contenant votre produit est arrivee en retard veuillez venir le recuperer", product.receiverNumber);
+                }
+                this.products.forEach((product) => {
+                    product.ProductStatus = "delivered";
+                });
                 return "sending email...";
-            });
-            this.products.forEach((product) => {
-                product.ProductStatus = "transporting";
             });
         }
         else if (this.status == "delivered") {
@@ -347,9 +373,14 @@ export class Cargo {
     }
     get totalWeight() {
         let totalWeight = 0;
-        this.products.forEach((product) => {
-            totalWeight += product.ProductWeight;
-        });
+        if (this.fullIndicator == "weight") {
+            this.products.forEach((product) => {
+                totalWeight += product.ProductWeight;
+            });
+        }
+        else {
+            totalWeight = this.products.length;
+        }
         return totalWeight;
     }
     get listOfProducts() {
@@ -388,11 +419,12 @@ export class RoadCargo extends Cargo {
             return "Chemical products are not allowed in road cargo";
         }
         else {
+            console.log(product);
             if (this.globalState == "open") {
                 if (this.full)
                     return "Cargo is full";
                 else if (this.fullIndicator == "numberOfProduct") {
-                    this.products.push(product);
+                    this.products.unshift(product);
                     if (this.products.length >= this.maxWeight) {
                         this.full = true;
                     }
@@ -404,7 +436,7 @@ export class RoadCargo extends Cargo {
                         return "error this Cargo is full";
                     }
                     else {
-                        this.products.push(product);
+                        this.products.unshift(product);
                         if (this.totalWeight >= this.maxWeight) {
                             this.full = true;
                         }
@@ -455,7 +487,7 @@ export class MaritimeCargo extends Cargo {
                 if (this.full)
                     return "error this Cargo is full";
                 else if (this.fullIndicator == "numberOfProduct") {
-                    this.products.push(product);
+                    this.products.unshift(product);
                     if (this.products.length >= this.maxWeight) {
                         this.full = true;
                     }
@@ -467,7 +499,7 @@ export class MaritimeCargo extends Cargo {
                         return "error this Cargo is full";
                     }
                     else {
-                        this.products.push(product);
+                        this.products.unshift(product);
                         if (this.totalWeight >= this.maxWeight) {
                             this.full = true;
                         }
@@ -507,7 +539,7 @@ export class AerialCargo extends Cargo {
                 if (this.full)
                     return "Cargo is full";
                 else if (this.fullIndicator == "numberOfProduct") {
-                    this.products.push(product);
+                    this.products.unshift(product);
                     if (this.products.length >= this.maxWeight) {
                         this.full = true;
                     }
@@ -519,7 +551,7 @@ export class AerialCargo extends Cargo {
                         return "error Cargo is full";
                     }
                     else {
-                        this.products.push(product);
+                        this.products.unshift(product);
                         if (this.totalWeight >= this.maxWeight) {
                             this.full = true;
                         }
@@ -565,4 +597,19 @@ export function sendMessage(message, to) {
         .then((response) => response.text())
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
+}
+function daysBetweenDates(dateString) {
+    // Get the current date
+    const currentDate = new Date();
+    // Parse the input date string
+    const inputDate = new Date(dateString);
+    // Ensure the input date is valid
+    if (isNaN(inputDate.getTime())) {
+        throw new Error("Invalid date format provided");
+    }
+    // Calculate the difference in time
+    const timeDifference = Math.abs(currentDate.getTime() - inputDate.getTime());
+    // Convert time difference from milliseconds to days
+    const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    return dayDifference;
 }

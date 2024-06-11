@@ -1,5 +1,24 @@
 [
     {
+        "id": 164,
+        "maxWeight": 60,
+        "fullIndicator": "weight",
+        "from": "Royaume-Uni",
+        "to": "Royaume-Uni",
+        "startingDate": "2024-06-10",
+        "endingDate": "2024-06-14",
+        "distance": 4378,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [],
+        "globalState": "open",
+        "status": "loading",
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
+    },
+    {
         "id": 935,
         "maxWeight": 4554,
         "fullIndicator": "weight",
@@ -30,7 +49,7 @@
                 "productType": "Food",
                 "productStatus": "loading",
                 "price": 10000,
-                "autreFrais": 5000
+                "endDate": ""
             }
         ],
         "globalState": "closed",
@@ -71,7 +90,7 @@
                 "productType": "Food",
                 "productStatus": "loading",
                 "price": 10000,
-                "autreFrais": 5000
+                "endDate": ""
             }
         ],
         "globalState": "closed",
@@ -112,7 +131,7 @@
                 "productType": "Food",
                 "productStatus": "loading",
                 "price": 10000,
-                "autreFrais": 5000
+                "endDate": ""
             }
         ],
         "globalState": "closed",
@@ -153,6 +172,7 @@
                 "productType": "Material",
                 "productStatus": "loading",
                 "price": 4749000,
+                "endDate": "",
                 "productSolidity": "cassable"
             }
         ],
@@ -194,28 +214,7 @@
                 "productType": "Food",
                 "productStatus": "loading",
                 "price": 10000,
-                "autreFrais": 5000
-            },
-            {
-                "id": 482,
-                "name": "Felicia Benton",
-                "weight": 57,
-                "client": {
-                    "name": "Yoshi Hull",
-                    "surname": "Rowland",
-                    "phone": "785953562",
-                    "address": "Exercitation digniss"
-                },
-                "receiver": {
-                    "name": "Colby Silva",
-                    "surname": "Clay",
-                    "phone": "781670210",
-                    "address": "Eum aspernatur volup"
-                },
-                "productType": "Material",
-                "productStatus": "loading",
-                "price": 4749000,
-                "productSolidity": "cassable"
+                "endDate": ""
             },
             {
                 "id": 346,
@@ -236,6 +235,7 @@
                 "productType": "Material",
                 "productStatus": "loading",
                 "price": 4749000,
+                "endDate": "",
                 "productSolidity": "cassable"
             }
         ],
@@ -277,6 +277,7 @@
                 "productType": "Material",
                 "productStatus": "loading",
                 "price": 4749000,
+                "endDate": "",
                 "productSolidity": "cassable"
             },
             {
@@ -297,7 +298,113 @@
                 },
                 "productType": "Food",
                 "productStatus": "loading",
-                "price": 0
+                "price": 10000,
+                "endDate": ""
+            }
+        ],
+        "globalState": "open",
+        "status": "loading",
+        "basePrice": 10000,
+        "full": false,
+        "foodPrice": 300,
+        "matPrice": 1000
+    },
+    {
+        "id": 729,
+        "maxWeight": 5,
+        "fullIndicator": "nbrProduct",
+        "from": "Royaume-Uni",
+        "to": "France",
+        "startingDate": "2024-06-10",
+        "endingDate": "2024-06-14",
+        "distance": 389810,
+        "duration": null,
+        "cargoType": "Aerial",
+        "products": [
+            {
+                "id": 548,
+                "name": "Uta Robinson",
+                "weight": 49,
+                "client": {
+                    "name": "Dante Guzman",
+                    "surname": "Blevins",
+                    "phone": "+1 (776) 781-9256",
+                    "address": "Nisi consequatur Es"
+                },
+                "receiver": {
+                    "name": "Patience Wong",
+                    "surname": "Mckay",
+                    "phone": "+1 (495) 924-4623",
+                    "address": "Non nihil sit repre"
+                },
+                "productType": "Material",
+                "productStatus": "loading",
+                "price": 389810000,
+                "endDate": "",
+                "productSolidity": "cassable"
+            },
+            {
+                "id": 954,
+                "name": "Kimberly Gonzales",
+                "weight": 48,
+                "client": {
+                    "name": "Pascale Suarez",
+                    "surname": "Decker",
+                    "phone": "+1 (785) 549-4406",
+                    "address": "Eveniet ut in esse"
+                },
+                "receiver": {
+                    "name": "Gisela Bowen",
+                    "surname": "Case",
+                    "phone": "+1 (199) 873-9347",
+                    "address": "Tempora sunt omnis i"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 10000,
+                "endDate": ""
+            },
+            {
+                "id": 177,
+                "name": "dkla",
+                "weight": 12,
+                "client": {
+                    "name": "diagne",
+                    "surname": "miudie\u00e9z",
+                    "phone": "785953562",
+                    "address": "ouakam"
+                },
+                "receiver": {
+                    "name": "diop",
+                    "surname": "jdka",
+                    "phone": "785953562",
+                    "address": "dakjl"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 10000,
+                "endDate": ""
+            },
+            {
+                "id": 19,
+                "name": "Astra Merrill",
+                "weight": 93,
+                "client": {
+                    "name": "Ulric Singleton",
+                    "surname": "Mason",
+                    "phone": "+1 (571) 255-4074",
+                    "address": "Quasi sunt esse est"
+                },
+                "receiver": {
+                    "name": "Briar Reyes",
+                    "surname": "Hart",
+                    "phone": "+1 (139) 208-3153",
+                    "address": "Deserunt quae aliqui"
+                },
+                "productType": "Food",
+                "productStatus": "loading",
+                "price": 10000,
+                "endDate": ""
             }
         ],
         "globalState": "open",

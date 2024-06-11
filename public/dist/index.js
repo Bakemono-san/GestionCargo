@@ -74,20 +74,71 @@ function show() {
     fullIndicator.addEventListener("input", (e) => {
         if (fullIndicator.selectedOptions[0].value == "weight") {
             indicator.innerText = "Max weight in kg:";
+            indicator.ariaPlaceholder = "Max weight in kg:";
         }
         else {
             indicator.innerText = "Number of product";
+            indicator.ariaPlaceholder = "Number of product";
         }
     });
     let addCargo = document.getElementById("addCargo");
-    addCargo.addEventListener("click", () => {
-        createCargoFromForm();
-        document.querySelector(".overlay").classList.remove("flex");
-        document.querySelector(".overlay").classList.add("hidden");
-        document.querySelector(".card").classList.remove("right-2");
-        document.querySelector(".card").classList.add("-right-full");
-        validateCargo();
+    let startingDate = document.getElementById("startingDate");
+    let endingDate = document.getElementById("endingDate");
+    let error = null;
+    startingDate.addEventListener("input", (e) => {
+        if (isDateLate(startingDate.value)) {
+            startingDate.classList.add("border-red-500");
+            error = "invalid starting date";
+            document.getElementById("messageBody").innerText = error;
+            document.getElementById("message").classList.add("right-2");
+            document.getElementById("message").classList.add("top-2");
+            setTimeout(() => {
+                document.getElementById("message").classList.remove("right-2");
+                document.getElementById("message").classList.remove("top-2");
+            }, 2000);
+        }
+        else {
+            startingDate.classList.remove("border-red-500");
+            error = null;
+        }
     });
+    endingDate.addEventListener("input", (e) => {
+        if (isDateLate(endingDate.value)) {
+            endingDate.classList.add("border-red-500");
+            error = "invalid ending date";
+            document.getElementById("messageBody").innerText = error;
+            document.getElementById("message").classList.add("right-2");
+            document.getElementById("message").classList.add("top-2");
+            setTimeout(() => {
+                document.getElementById("message").classList.remove("right-2");
+                document.getElementById("message").classList.remove("top-2");
+            }, 2000);
+        }
+        else {
+            endingDate.classList.remove("border-red-500");
+            error = null;
+        }
+    });
+    if (error == null) {
+        addCargo.addEventListener("click", () => {
+            createCargoFromForm();
+            document.querySelector(".overlay").classList.remove("flex");
+            document.querySelector(".overlay").classList.add("hidden");
+            document.querySelector(".card").classList.remove("right-2");
+            document.querySelector(".card").classList.add("-right-full");
+            validateCargo();
+        });
+    }
+    else {
+        error = "cargo not added due to invalid date";
+        document.getElementById("messageBody").innerText = error;
+        document.getElementById("message").classList.add("right-2");
+        document.getElementById("message").classList.add("top-2");
+        setTimeout(() => {
+            document.getElementById("message").classList.remove("right-2");
+            document.getElementById("message").classList.remove("top-2");
+        }, 2000);
+    }
 }
 function hide() {
     document.querySelector(".overlay").classList.remove("flex");
@@ -178,15 +229,19 @@ function toggleSlide(index) {
                 const pdfFile = await generateRecipePDF(product);
                 sendEmail(product.ProductID, pdfFile);
                 sendToJson();
+                fetchData();
             }
         }
     });
 }
 function filter() {
+    filterAll();
+    filterType();
+    filterStatus();
+    filterSteps();
+}
+function filterAll() {
     let filterAll = document.getElementById("filterAll");
-    let filterType = document.getElementById("filterType");
-    let filterStatus = document.getElementById("filterStatus");
-    let filterStep = document.getElementById("filterStep");
     filterAll.addEventListener("keyup", (e) => {
         donnee = data.filter((cargo) => {
             return (cargo.typeOfCargo
@@ -209,20 +264,31 @@ function filter() {
                     .toLowerCase()
                     .includes(filterAll.value.toLowerCase().trim()));
         });
-        donnee = donnee.slice(page * el, page * el + el);
         if (document.getElementById("cardContainer")?.style.display == "flex") {
+            donnee = donnee.slice(page * el, page * el + el);
             displayListCargos();
         }
         else {
+            cardData = donnee;
             displayCargosCard();
         }
     });
+}
+function filterType() {
+    let filterType = document.getElementById("filterType");
     filterType.addEventListener("change", (e) => {
-        donnee = data.filter((cargo) => {
-            return cargo.typeOfCargo
-                .toLowerCase()
-                .includes(filterType.selectedOptions[0].value.toLowerCase());
-        });
+        if (filterType.selectedOptions[0].value == "Type") {
+            donnee = data;
+            cardData = donnee;
+        }
+        else {
+            donnee = data.filter((cargo) => {
+                return cargo.typeOfCargo
+                    .toLowerCase()
+                    .includes(filterType.selectedOptions[0].value.toLowerCase());
+            });
+        }
+        cardData = donnee;
         donnee = donnee.slice(page * el, page * el + el);
         if (document.getElementById("cardContainer")?.style.display == "flex") {
             displayListCargos();
@@ -231,13 +297,24 @@ function filter() {
             displayCargosCard();
         }
     });
+}
+function filterStatus() {
+    let filterStatus = document.getElementById("filterStatus");
     filterStatus.addEventListener("change", (e) => {
-        donnee = data.filter((cargo) => {
-            return cargo.cargoGlobalState
-                .toLowerCase()
-                .includes(filterStatus.selectedOptions[0].value.toLowerCase());
-        });
-        donnee = donnee.slice(page * el, page * el + el);
+        console.log(filterStatus.selectedOptions[0].value);
+        if (filterStatus.selectedOptions[0].value == "Status") {
+            donnee = data;
+            cardData = donnee;
+        }
+        else {
+            donnee = data.filter((cargo) => {
+                return cargo.cargoGlobalState
+                    .toLowerCase()
+                    .includes(filterStatus.selectedOptions[0].value.toLowerCase());
+            });
+            cardData = donnee;
+            donnee = donnee.slice(page * el, page * el + el);
+        }
         if (document.getElementById("cardContainer")?.style.display == "flex") {
             displayListCargos();
         }
@@ -245,12 +322,22 @@ function filter() {
             displayCargosCard();
         }
     });
+}
+function filterSteps() {
+    let filterStep = document.getElementById("filterStep");
     filterStep.addEventListener("change", (e) => {
-        donnee = data.filter((cargo) => {
-            return cargo.cargoStatus
-                .toLowerCase()
-                .includes(filterStep.selectedOptions[0].value.toLowerCase());
-        });
+        if (filterStep.selectedOptions[0].value == "Step") {
+            donnee = data;
+            cardData = donnee;
+        }
+        else {
+            donnee = data.filter((cargo) => {
+                return cargo.cargoStatus
+                    .toLowerCase()
+                    .includes(filterStep.selectedOptions[0].value.toLowerCase());
+            });
+            cardData = donnee;
+        }
         donnee = donnee.slice(page * el, page * el + el);
         if (document.getElementById("cardContainer")?.style.display == "flex") {
             displayListCargos();
@@ -454,7 +541,8 @@ function showDetailCargo(index) {
             archiverProduct.addEventListener("click", () => {
                 let message = data[index].archiveProduct(indexproduct);
                 document.getElementById("messageBody").innerText = message;
-                document.getElementById('productStatus').innerText = data[index].getProduct(indexproduct).ProductStatus;
+                document.getElementById("productStatus").innerText =
+                    data[index].getProduct(indexproduct).ProductStatus;
                 document.getElementById("message").classList.add("right-2");
                 document.getElementById("message").classList.add("top-2");
                 setTimeout(() => {
@@ -466,7 +554,8 @@ function showDetailCargo(index) {
             lostProduct.addEventListener("click", () => {
                 let message = data[index].markProductLost(indexproduct);
                 document.getElementById("messageBody").innerText = message;
-                document.getElementById('productStatus').innerText = data[index].getProduct(indexproduct).ProductStatus;
+                document.getElementById("productStatus").innerText =
+                    data[index].getProduct(indexproduct).ProductStatus;
                 document.getElementById("message").classList.add("right-2");
                 document.getElementById("message").classList.add("top-2");
                 setTimeout(() => {
@@ -752,9 +841,9 @@ function createCargoFromForm() {
         console.error("Invalid cargo data");
         return null;
     }
-    if (isDateLate(startingDate)) {
+    if (isDateLate(startingDate) || isDateLate(endingDate)) {
         console.error("Invalid starting date");
-        return null;
+        return "invalid date";
     }
     // Additional validation if needed
     // Create cargo object
@@ -763,9 +852,9 @@ function createCargoFromForm() {
     endingLocation, startingDate, endingDate, // You need to extract this from the map or user input
     distance, // You need to calculate this based on the selected locations
     duration, cargoType);
-    data.push(cargo);
+    data.unshift(cargo);
     sendToJson();
-    // fetchData();
+    fetchData();
 }
 function isDateLate(dateString) {
     const [year, month, day] = dateString.split("-").map(Number);
@@ -779,6 +868,7 @@ function displayCargosCard() {
     cardContainer.innerHTML = "";
     let cards = cardData
         .map((element, index) => {
+        let quantifier = element.fullIndicator == "weight" ? "kg" : "produits";
         return `<div class="Card container md:max-w-56 lg:max-w-56 bg-gray-200 p-2 rounded flex flex-col gap-2 shadow-lg text-slate-700">
     <!-- Header Section -->
     <div class="flex justify-between items-center mb-2">
@@ -793,7 +883,7 @@ function displayCargosCard() {
 
     <!-- Weight Section -->
     <div class="flex justify-between items-center mb-2">
-        <p class="text-lg font-medium">${element.totalWeight} / ${element.cargoMaxWeight} kg</p>
+        <p class="text-lg font-medium">${element.totalWeight} / ${element.cargoMaxWeight} ${quantifier}</p>
         <div class="relative" id="showAction" data-index="${index}">
             <div class="border absolute rounded bg-white shadow-lg min-w-44 -left-32 hidden z-10">
                 <p class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="ajouterProduit" data-idCargo="${element.id}">Add Product</p>
@@ -893,6 +983,12 @@ function displayListCargos() {
     let cards = donnee
         .map((element, index) => {
         let id = data.findIndex((e) => e.id == element.id);
+        let globalStateColor = element.globalState == "open" ? "text-green-500" : "text-red-500";
+        let StatusColor = element.status == "delivered" || element.status == "archived"
+            ? "text-red-500"
+            : element.status == "loading"
+                ? "text-green-500"
+                : "text-yellow-500";
         return `<tr class="group">
       <td>${element.id}</td>
       <td>${element.cargoType}</td>
@@ -901,8 +997,8 @@ function displayListCargos() {
       <td>${element.endingDate}</td>
       <td>${element.from}</td>
       <td>${element.to}</td>
-      <td>${element.status}</td>
-      <td>${element.globalState}</td>
+      <td class="${StatusColor}">${element.status}</td>
+      <td class="${globalStateColor}">${element.globalState}</td>
       <td class="flex gap-2 justify-center items-center">
       <button class="rounded-full group-hover:flex border w-6 h-6 border-black border-solid items-center justify-center hidden" id="ajouterProduitList" data-idCargo="${element.id}">
       <i class="fa text-gray-700 fa-plus " aria-hidden="true"></i>

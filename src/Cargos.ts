@@ -8,7 +8,8 @@ export type Status =
   | "delivered"
   | "lost"
   | "archived"
-  | "arrived";
+  | "recupere"
+  | "late";
 export type fullIndicator = "weight" | "numberOfProduct";
 
 export class User {
@@ -24,6 +25,7 @@ export class Product {
   protected productStatus: Status = "loading";
   static minPrice: number = 10000;
   public price: number = 0;
+  public endDate: string = "";
 
   constructor(
     protected id: number,
@@ -34,16 +36,44 @@ export class Product {
     protected productType: string
   ) {}
 
+  recupere() {
+    this.productStatus = "recupere";
+  }
+
+  set setEndDate(date: string) {
+    this.endDate = date;
+  }
+
+  get getEndDate() {
+    return this.endDate;
+  }
+
+  get remainingDays() {
+    return daysBetweenDates(this.endDate);
+  }
+
   deliver() {
-    this.productStatus = "delivered";
-    sendMessage(
-      `votre colis est arrivee.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
-      this.clientNumber
-    );
-    sendMessage(
-      `votre colis est arrivee  .info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
-      this.receiverNumber
-    );
+    if (this.remainingDays <= 0) {
+      this.productStatus = "delivered";
+      sendMessage(
+        `votre colis est arrivee.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+        this.clientNumber
+      );
+      sendMessage(
+        `votre colis est arrivee  .info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+        this.receiverNumber
+      );
+    } else {
+      this.productStatus = "late";
+      sendMessage(
+        `votre colis est arrivee en retard.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+        this.clientNumber
+      );
+      sendMessage(
+        `votre colis est arrivee en retard.info => nom: ${this.productName}  identifiant: ${this.ProductID} prix: ${this.price}`,
+        this.receiverNumber
+      );
+    }
   }
 
   markLost() {
@@ -200,7 +230,6 @@ class Breakable extends MaterialProduct {}
 class Unbreakable extends MaterialProduct {}
 
 export class FoodProduct extends Product {
-  public autreFrais: number = 5000;
   constructor(
     protected id: number,
     protected name: string,
@@ -258,11 +287,11 @@ export class Cargo {
     return totalPrice;
   }
 
-  addProduct(product: Product): string|undefined {
+  addProduct(product: Product): string | undefined {
     if (this.globalState == "open") {
       if (this.full) return "Cargo is full";
       else if (this.fullIndicator == "numberOfProduct") {
-        this.products.push(product);
+        this.products.unshift(product);
         if (this.products.length >= this.maxWeight) {
           this.full = true;
         }
@@ -272,15 +301,15 @@ export class Cargo {
           this.full = true;
           return "Cargo is full";
         } else {
-          this.products.push(product);
-          
+          this.products.unshift(product);
+
           if (this.totalWeight >= this.maxWeight) {
             this.full = true;
           }
           return "product added successfully";
         }
       }
-    }else{
+    } else {
       return "error this Cargo is closed";
     }
   }
@@ -297,7 +326,6 @@ export class Cargo {
   }
 
   upgradeStatus() {
-
     if (this.status == "loading") {
       if (this.products.length > 0) {
         this.status = "transporting";
@@ -312,20 +340,31 @@ export class Cargo {
     } else if (this.status == "transporting") {
       this.status = "delivered";
       this.products.forEach((product) => {
-        
-        product.ProductStatus = "delivered";
-        sendMessage(
-          "la cargaison contenant votre produit est arrivee veuillez venir le recuperer ",
-          product.clientNumber
-        );
-        sendMessage(
-          "la cargaison contenant votre produit est arrivee veuillez venir le recuperer",
-          product.receiverNumber
-        );
-        return "sending email..."
-      });
-      this.products.forEach((product) => {
-        product.ProductStatus = "transporting";
+        if (daysBetweenDates(this.endingDate) <= 0) {
+          product.ProductStatus = "delivered";
+          sendMessage(
+            "la cargaison contenant votre produit est arrivee veuillez venir le recuperer ",
+            product.clientNumber
+          );
+          sendMessage(
+            "la cargaison contenant votre produit est arrivee veuillez venir le recuperer",
+            product.receiverNumber
+          );
+        } else {
+          product.ProductStatus = "late";
+          sendMessage(
+            "la cargaison contenant votre produit est arrivee en retard veuillez venir le recuperer ",
+            product.clientNumber
+          );
+          sendMessage(
+            "la cargaison contenant votre produit est arrivee en retard veuillez venir le recuperer",
+            product.receiverNumber
+          );
+        }
+        this.products.forEach((product) => {
+          product.ProductStatus = "delivered";
+        });
+        return "sending email...";
       });
     } else if (this.status == "delivered") {
       this.status = "archived";
@@ -368,7 +407,7 @@ export class Cargo {
     return "product marked as lost";
   }
 
-  archiveProduct(index:number){
+  archiveProduct(index: number) {
     this.products[index].archive();
     return "product archived";
   }
@@ -413,9 +452,13 @@ export class Cargo {
 
   get totalWeight(): number {
     let totalWeight: number = 0;
-    this.products.forEach((product) => {
-      totalWeight += product.ProductWeight;
-    });
+    if (this.fullIndicator == "weight") {
+      this.products.forEach((product) => {
+        totalWeight += product.ProductWeight;
+      });
+    }else{
+      totalWeight = this.products.length;
+    }
     return totalWeight;
   }
 
@@ -494,7 +537,7 @@ export class Cargo {
 export class RoadCargo extends Cargo {
   protected foodPrice: number = 100;
   protected matPrice: number = 200;
-  addProduct(product: Product): string|undefined {
+  addProduct(product: Product): string | undefined {
     if (product instanceof FoodProduct) {
       product.price = this.foodPrice * this.distance;
     } else if (product instanceof MaterialProduct) {
@@ -504,10 +547,12 @@ export class RoadCargo extends Cargo {
     if (product instanceof ChemicalProduct) {
       return "Chemical products are not allowed in road cargo";
     } else {
+      console.log(product);
+      
       if (this.globalState == "open") {
         if (this.full) return "Cargo is full";
         else if (this.fullIndicator == "numberOfProduct") {
-          this.products.push(product);
+          this.products.unshift(product);
           if (this.products.length >= this.maxWeight) {
             this.full = true;
           }
@@ -517,15 +562,15 @@ export class RoadCargo extends Cargo {
             this.full = true;
             return "error this Cargo is full";
           } else {
-            this.products.push(product);
-            
+            this.products.unshift(product);
+
             if (this.totalWeight >= this.maxWeight) {
               this.full = true;
             }
             return "cargo added successfully";
           }
         }
-      }else{
+      } else {
         return "error this Cargo is closed";
       }
     }
@@ -550,8 +595,7 @@ export class RoadCargo extends Cargo {
 export class MaritimeCargo extends Cargo {
   protected foodPrice: number = 90;
   protected matPrice: number = 400;
-  addProduct(product: Product): string|undefined {
- 
+  addProduct(product: Product): string | undefined {
     if (product instanceof FoodProduct) {
       product.price = this.foodPrice * this.distance;
     } else if (product instanceof MaterialProduct) {
@@ -568,7 +612,7 @@ export class MaritimeCargo extends Cargo {
       if (this.globalState == "open") {
         if (this.full) return "error this Cargo is full";
         else if (this.fullIndicator == "numberOfProduct") {
-          this.products.push(product);
+          this.products.unshift(product);
           if (this.products.length >= this.maxWeight) {
             this.full = true;
           }
@@ -578,15 +622,15 @@ export class MaritimeCargo extends Cargo {
             this.full = true;
             return "error this Cargo is full";
           } else {
-            this.products.push(product);
-            
+            this.products.unshift(product);
+
             if (this.totalWeight >= this.maxWeight) {
               this.full = true;
             }
             return "cargo added successfully";
           }
         }
-      }else{
+      } else {
         return "error this Cargo is closed";
       }
     }
@@ -605,7 +649,7 @@ export class MaritimeCargo extends Cargo {
 export class AerialCargo extends Cargo {
   protected foodPrice: number = 300;
   protected matPrice: number = 1000;
-  addProduct(product: Product): string|undefined {
+  addProduct(product: Product): string | undefined {
     if (product instanceof FoodProduct) {
       product.price = this.foodPrice * this.distance;
     } else if (product instanceof MaterialProduct) {
@@ -614,12 +658,12 @@ export class AerialCargo extends Cargo {
     console.log(product, this.foodPrice * this.distance);
 
     if (product instanceof ChemicalProduct) {
-     return "Chemical products are not allowed in road cargo";
+      return "Chemical products are not allowed in road cargo";
     } else {
       if (this.globalState == "open") {
         if (this.full) return "Cargo is full";
         else if (this.fullIndicator == "numberOfProduct") {
-          this.products.push(product);
+          this.products.unshift(product);
           if (this.products.length >= this.maxWeight) {
             this.full = true;
           }
@@ -629,15 +673,15 @@ export class AerialCargo extends Cargo {
             this.full = true;
             return "error Cargo is full";
           } else {
-            this.products.push(product);
-            
+            this.products.unshift(product);
+
             if (this.totalWeight >= this.maxWeight) {
               this.full = true;
             }
             return "cargo added successfully";
           }
         }
-      }else{
+      } else {
         return "error this Cargo is closed";
       }
     }
@@ -685,4 +729,25 @@ export function sendMessage(message: string, to: string) {
     .then((response: Response) => response.text())
     .then((result: string) => console.log(result))
     .catch((error: any) => console.error(error));
+}
+
+function daysBetweenDates(dateString: string): number {
+  // Get the current date
+  const currentDate = new Date();
+
+  // Parse the input date string
+  const inputDate = new Date(dateString);
+
+  // Ensure the input date is valid
+  if (isNaN(inputDate.getTime())) {
+    throw new Error("Invalid date format provided");
+  }
+
+  // Calculate the difference in time
+  const timeDifference = Math.abs(currentDate.getTime() - inputDate.getTime());
+
+  // Convert time difference from milliseconds to days
+  const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+  return dayDifference;
 }

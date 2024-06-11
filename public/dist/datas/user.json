@@ -1,0 +1,16 @@
+{
+    "users":[
+        {
+            "email":"mousdef34@gmail.com",
+            "password":"123456"
+        },
+        {
+            "email":"ochatobake@gmail.com",
+            "password":"1234"
+        },
+        {
+            "email": "admin@gmail.com",
+            "password": "admin"
+        }
+    ]
+}

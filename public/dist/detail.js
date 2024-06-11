@@ -81,7 +81,7 @@ function getProduct(id) {
           </div>
           <div class="text-center">
             <h2 class="text-xl font-semibold">Status:</h2>
-            <p class="mt-1 px-2 py-1 bg-yellow-500 text-white rounded">${product.ProductStatus}</p>
+            <p class="mt-1 px-2 py-1 bg-yellow-500 text-white rounded" id="detailStatus">${product.ProductStatus}</p>
           </div>
           <div class="text-center">
             <h2 class="text-xl font-semibold">Price:</h2>
@@ -129,7 +129,7 @@ function getProduct(id) {
     
       <!-- Recuperer Button -->
       <div class="flex justify-center pt-4">
-        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+        <button id="recuperer" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
           Recuperer
         </button>
       </div>
@@ -138,6 +138,15 @@ function getProduct(id) {
       
       `;
             detail.innerHTML = model;
+            let recuperer = document.getElementById("recuperer");
+            recuperer.addEventListener("click", () => {
+                product.recupere();
+                let detailStatus = document.getElementById("detailStatus");
+                detailStatus.innerHTML = "Recupere";
+                recuperer.style.display = "none";
+                console.log(data);
+                sendToJson();
+            });
         }
     });
 }
@@ -147,3 +156,22 @@ findProduct.value = "";
 findProduct?.addEventListener("input", () => {
     getProduct(findProduct.value);
 });
+function sendToJson() {
+    fetch("./dist/data.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+        .then((response) => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+        .then((data) => { })
+        .catch((error) => {
+        console.error("Fetch error:", error);
+    });
+}

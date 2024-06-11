@@ -95,7 +95,7 @@
                                 <option default>Step</option>
                                 <option value="Loading">Loading</option>
                                 <option value="Transporting">Transporting</option>
-                                <option value="Delivering">Delivering</option>
+                                <option value="delivered">Delivering</option>
                                 <option value="Lost">Lost</option>
                             </select>
                         </div>
@@ -110,7 +110,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="grid xl:grid-cols-4 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-5 overflow-scroll gap-4" id="cardContainer">
+                <div class="grid xl:grid-cols-4 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-5 overflow-y-scroll overflow-x-hidden gap-4" id="cardContainer">
                 </div>
                 <div class="h-12 bg-white border-t absolute bottom-0 w-full">
 
@@ -236,6 +236,7 @@
                                                 <input type="text" class="w-1/2" name="clientLastName" id="clientLastName" placeholder="Last name" />
                                             </div>
                                             <input type="text" name="clientAddress" id="clientAddress" placeholder="Address" />
+                                            <input type="email" name="clientEmail" id="clientEmail" placeholder="Email" require>
                                         </div>
                                     </form>
 
@@ -250,6 +251,7 @@
                                                 <input type="text" class="w-1/2" name="receiverLastName" id="receiverLastName" placeholder="Last name" />
                                             </div>
                                             <input type="text" name="receiverAddress" id="receiverAddress" placeholder="Address" />
+                                            <input type="email" name="receiverEmail" id="receiverEmail" placeholder="Email" require>
                                         </div>
                                     </form>
                                     <div class="flex justify-center w-full left-0 absolute bottom-4 hover:text-teal-400 text-white">
